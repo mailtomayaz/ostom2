@@ -587,6 +587,8 @@ class ExternalDb
     //add products
     public function addProducts()
     {
+        $this->modelExternalDb->addAttributeSet();
+        
         if ($results = $this->newDbConnection()->fetchAll($this->getAllProductDetials())) {
             $ncounter = 0;
             $nCounter = 0;

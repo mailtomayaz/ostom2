@@ -54,6 +54,6 @@ class InstallData implements InstallDataInterface
         );
 
         //add attribute sets
-        $this->modelExternalDb->addAttributeSet();
+        //$this->modelExternalDb->addAttributeSet();
     }
 }
