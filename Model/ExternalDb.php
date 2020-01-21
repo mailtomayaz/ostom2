@@ -242,6 +242,11 @@ class ExternalDb
         if ($categoryImage == '') {
             $imageName = $categoryImage = 'dummyimage.png';
             $imgPath = BP . '/app/code/Embraceit/OscommerceToMagento/view/adminhtml/web/images/';
+            //in case composer install
+            if (!$this->file->isExists($imgPath)) {
+                $imgPath = BP . '/vender/embraceit/oscommerce-to-magento/view/adminhtml/web/images/';
+            }
+
         } else {
             $imgPath = $this->getCategoryImagePath();
         }
@@ -269,7 +274,12 @@ class ExternalDb
         $imageName = '';
         if ($productImage == '') {
             $imageName = $productImage = 'dummyimage.png';
+            //menual install path
             $imgPath = BP . '/app/code/Embraceit/OscommerceToMagento/view/adminhtml/web/images/';
+            //in case composer install
+            if (!$this->file->isExists($imgPath)) {
+                $imgPath = BP . '/vender/embraceit/oscommerce-to-magento/view/adminhtml/web/images/';
+            }
         } else {
             $imgPath = $this->getProductImagePath();
         }
@@ -1012,11 +1022,11 @@ class ExternalDb
     public function getCustomOptionVersionTwo($prod)
     {
         try {
-        //get all options attached with product
+            //get all options attached with product
             $productIdEco = $prod['products_id'];
-        //generate sku
+            //generate sku
             $productSku = 'sku-' . $productIdEco;
-        //load product by sky
+            //load product by sky
             $product = $this->productRepository->get($productSku);
             $orgPrice = $product->getPrice();
             $productIdSku = $product->getId();
@@ -1030,31 +1040,31 @@ class ExternalDb
                     //get option detial with option id
                     $optionId = $data['options_id'];
                     $optionData = $this->newDbConnection()
-                    ->fetchAll($this->queryGetOptionDetial($optionId));
+                        ->fetchAll($this->queryGetOptionDetial($optionId));
                     $optionName = $optionData[0]['products_options_name'];
                     //get option value
                     $resultOptionData = $this->newDbConnection()
-                    ->fetchAll($this->queryGetOptionData($optionId, $productIdEco));
+                        ->fetchAll($this->queryGetOptionData($optionId, $productIdEco));
 
                     //get option values
                     foreach ($resultOptionData as $option) {
                         $arrValue[] = [
-                        'title' => $option['products_options_values_name'],
-                        'price' => $option['options_values_price'],
-                        'price_type' => 'fixed',
-                        'sku' => '',
-                        'sort_order' => 0,
+                            'title' => $option['products_options_values_name'],
+                            'price' => $option['options_values_price'],
+                            'price_type' => 'fixed',
+                            'sku' => '',
+                            'sort_order' => 0,
                         ];
                     }
                     $options = [
 
-                    [
-                        'title' => $optionName,
-                        'type' => 'drop_down',
-                        'is_require' => 1,
-                        'sort_order' => 0,
-                        'values' => $arrValue,
-                    ],
+                        [
+                            'title' => $optionName,
+                            'type' => 'drop_down',
+                            'is_require' => 1,
+                            'sort_order' => 0,
+                            'values' => $arrValue,
+                        ],
                     ];
 
                 }
@@ -1074,8 +1084,8 @@ class ExternalDb
                 foreach ($options as $arrayOption) {
                     $option = $this->productOptionFactory->create();
                     $option->setProductId($product->getId())
-                    ->setStoreId($product->getStoreId())
-                    ->addData($arrayOption);
+                        ->setStoreId($product->getStoreId())
+                        ->addData($arrayOption);
                     $product->addOption($option);
 
                 }
