@@ -138,7 +138,11 @@ class Datacheck extends Template
 
     public function getCustomOptionCount()
     {
-        return $this->modelExternalDb->getTotalCustomOptionCount();
+        $nCount = $this->modelExternalDb->getTotalCustomOptionCount();
+        if ($nCount == null) {
+            $nCount = 0;
+        }
+        return $nCount;
     }
     public function getProductImagePath()
     {

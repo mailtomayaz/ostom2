@@ -70,10 +70,10 @@
                             <tr>
                                 <td><?= /* @noEscape */  $block->getCategoryInfo(); ?></td>
                                 <td><?= /* @noEscape */  $block->getCategoryImagePath(); ?></td>
-                                <td><?= /* @noEscape */  ?></td>
-                                <td><?= /* @noEscape */  ?></td>
                                 <td></td>
-                                <td><?= /* @noEscape */  ?></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                                 <td><button class="importCategories">Import Categories</button></td>
                             </tr>
                             <tr>
@@ -117,10 +117,10 @@
                             <tr>
                                 <td><?= /* @noEscape */  $block->getProductCount(); ?></td>
                                 <td><?= /* @noEscape */  $block->getProductImagePath(); ?></td>
-                                <td><?= /* @noEscape */ ?></td>
-                                <td><?= /* @noEscape */ ?></td>
                                 <td></td>
-                                <td><?= /* @noEscape */ ?></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                                 <td> <button class="importProducts">Import Products</button></td>
                             </tr>
                             <tr>
@@ -164,11 +164,11 @@
                         <tbody>
                             <tr>
                                 <td><?= /* @noEscape */  $block->getCustomOptionCount(); ?></td>
-                                <td><?= /* @noEscape */  ?></td>
-                                <td><?= /* @noEscape */ ?></td>
-                                <td><?= /* @noEscape */  ?></td>
                                 <td></td>
-                                <td><?= /* @noEscape */  ?></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                                 <td> <button class="importProductsCustomizeOptions">Import Customizeable
                                         Options</button></td>
                             </tr>
@@ -195,13 +195,6 @@
     </div>
 </div>
 </div>
-<?= /* @noEscape */
-
-$isCustomOption = $block->getCustomOptionCount();
-if ($isCustomOption == null) {
-    $isCustomOption = 0;
-}
-?>
 <script type="text/javascript">
 require([
     "jquery",
@@ -413,7 +406,7 @@ require([
                 var customurl = "<?= /* @noEscape */  $block->getBaseUrl() ?>" +
                     'admin/dataimport/Ajax/Getdataoptions';
                 var bar = document.getElementById('progressbaroption');
-                bar.max = "<?= /* @noEscape */  $isCustomOption; ?>"" ;
+                bar.max = "<?= /* @noEscape */  $block->getCustomOptionCount(); ?>" ;
                 bar.value = 1; // completed Steps
                 $.ajax({
                     url: customurl,
