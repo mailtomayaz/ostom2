@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Embraceit_OscommerceToMagento::embraceIT" title="Embrace IT" translate="title" module="Embraceit_OscommerceToMagento" sortOrder="150" dependsOnModule="Embraceit_OscommerceToMagento" resource="Embraceit_OscommerceToMagento::parent"/>
+        <add id="Embraceit_OscommerceToMagento::import_data" title="Import Data" translate="title" module="Embraceit_OscommerceToMagento" sortOrder="10" parent="Embraceit_OscommerceToMagento::embraceIT" action="dataimport/index/index" resource="Embraceit_OscommerceToMagento::parent"/>
+        
+    </menu>
+</config>
