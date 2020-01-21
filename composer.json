@@ -2,7 +2,7 @@
     "name": "mailtomayaz/oscommerce-to-magento",
     "description": "Import data from oscommarce to magento 2",
     "require": {
-        "php": "~7.0.13|~7.1.*|7.2.*"
+        "php": "7.0.*|7.1.*|7.2.*"
        
     },
     "suggest": {
