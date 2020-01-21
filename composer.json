@@ -3,10 +3,6 @@
     "description": "Import data from oscommarce to magento 2",
     "require": {
         "php": "7.0.*|7.1.*|7.2.*"
-       
-    },
-    "suggest": {
-       
     },
     "type": "magento2-module",
     "version": "1.0.1",
