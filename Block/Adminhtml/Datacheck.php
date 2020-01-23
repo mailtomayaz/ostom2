@@ -88,10 +88,22 @@ class Datacheck extends Template
     {
         return $this->modelExternalDb->queryProductsInfo();
     }
+    /**
+     * Attribute set information by id
+     *
+     * @param int $id
+     * @return array
+     */
     public function getAttributeSet($id)
     {
         return $this->modelExternalDb->getAtributeSet($id);
     }
+    /**
+     * Undocumented function
+     *
+     * @param string $option
+     * @return array
+     */
     public function getQueryCustomOptions($option)
     {
         return $this->modelExternalDb->queryCustomOptions($option);

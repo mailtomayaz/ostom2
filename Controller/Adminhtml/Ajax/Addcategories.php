@@ -1,16 +1,16 @@
 <?php
 namespace Embraceit\OscommerceToMagento\Controller\Adminhtml\Ajax;
 
-use Magento\Framework\Controller\Result\JsonFactory;
-//use Magento\Framework\Controller\Result\JsonFactory;
 use Embraceit\OscommerceToMagento\Model\ExternalDb as ModelExternalDb;
+//use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Framework\Controller\Result\JsonFactory;
 
 class Addcategories extends \Magento\Framework\App\Action\Action
 {
     /**
      * @var \Magento\Framework\View\Result\PageFactory
      */
-    protected $_pageFactory;
+    protected $pageFactory;
     protected $modelExternalDb;
     protected $jsonFactory;
     /**
@@ -22,8 +22,8 @@ class Addcategories extends \Magento\Framework\App\Action\Action
         ModelExternalDb $modelExternalDb,
         JsonFactory $jsonFactory
     ) {
-        $this->_pageFactory = $pageFactory;
-        $this->modelExternalDb=$modelExternalDb;
+        $this->pageFactory = $pageFactory;
+        $this->modelExternalDb = $modelExternalDb;
         $this->jsonFactory = $jsonFactory;
         return parent::__construct($context);
     }
@@ -34,8 +34,8 @@ class Addcategories extends \Magento\Framework\App\Action\Action
      */
     public function execute()
     {
-        $catCount=$this->modelExternalDb->getCategoryCount();
-        $categories=$this->modelExternalDb->addCategory();
-        return $this->jsonFactory->create()->setData(['importStatus'=>$categories]);
+        $catCount = $this->modelExternalDb->getCategoryCount();
+        $categories = $this->modelExternalDb->addCategory();
+        return $this->jsonFactory->create()->setData(['importStatus' => $categories]);
     }
 }

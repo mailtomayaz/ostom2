@@ -244,9 +244,8 @@ class ExternalDb
             $imgPath = BP . '/app/code/Embraceit/OscommerceToMagento/view/adminhtml/web/images/';
             //in case composer install
             if (!$this->file->isExists($imgPath)) {
-                $imgPath = BP . '/vender/embraceit/oscommerce-to-magento/view/adminhtml/web/images/';
+                $imgPath = BP . '/vendor/embraceit/oscommerce-to-magento/view/adminhtml/web/images/';
             }
-
         } else {
             $imgPath = $this->getCategoryImagePath();
         }
@@ -278,7 +277,7 @@ class ExternalDb
             $imgPath = BP . '/app/code/Embraceit/OscommerceToMagento/view/adminhtml/web/images/';
             //in case composer install
             if (!$this->file->isExists($imgPath)) {
-                $imgPath = BP . '/vender/embraceit/oscommerce-to-magento/view/adminhtml/web/images/';
+                $imgPath = BP . '/vendor/embraceit/oscommerce-to-magento/view/adminhtml/web/images/';
             }
         } else {
             $imgPath = $this->getProductImagePath();
@@ -310,7 +309,6 @@ class ExternalDb
                     if (strtolower($lang['name']) == strtolower($mStoreLang['name'])) {
                         $addStore = false;
                     }
-
                 }
                 if ($addStore) {
                     $this->createStoreView('', 1, $lang['name'], $lang['code'], 1, 1, 3);
@@ -384,7 +382,6 @@ class ExternalDb
     {
         $catId = '';
         foreach ($arrDescription as $description) {
-
             if ($data['data']['parent_id'] == '' || $description["categories_name"] == '') {
                 continue;
             }
@@ -394,7 +391,6 @@ class ExternalDb
             $storeId = $this->getStoreId($description['language_id']);
             $data['data']['store_id'] = $storeId;
             if ($description['language_id'] == 1) {
-
                 $catId = $this->saveCategroyFirstTime($description, $data);
             } else {
                 $urlKey = $this->removeAccent($description["categories_name"]);
@@ -410,7 +406,6 @@ class ExternalDb
                 $data['data']['url_key'] = $urlKey;
                 $this->updateCategory($description, $data);
             }
-
         }
     }
     /**
@@ -473,7 +468,6 @@ class ExternalDb
                     if ($catResults = $this->newDbConnection()->fetchAll($this->getCategoryDescription($categoryId))) {
                         $storeId = '';
                         $this->getCategoryDiscriptionData($catResults, $data);
-
                     }
                     $nCounter++;
                     $this->setValue($nCounter);
@@ -481,7 +475,6 @@ class ExternalDb
                     // $this->logger->critical($e->getMessage());
                     return $e->getMessage();
                 }
-
             }
             return "Categories has been added";
         }
@@ -578,7 +571,6 @@ class ExternalDb
                 $attributeSet = $this->attributeSetFactory->create();
                 $attributeSet->setData($data);
                 $this->attributeSetManagement->create($entityTypeCode, $attributeSet, $defaultSetId);
-
             }
         }
     }
@@ -676,33 +668,28 @@ class ExternalDb
                     $resultsProdDes = $this->newDbConnection()
                         ->fetchAll($this->getProductDescription($product['products_id']));
                     foreach ($resultsProdDes as $proDes) {
-
                         if ($proDes['products_name'] == '') {
                             continue;
                         }
 
                         $sku = '';
                         if ($proDes['language_id'] == 1) {
-
                             $productIdProd = $this->addNewProductData(
                                 $proDes,
                                 $product['products_id'],
                                 $productInfo,
                                 $pImage
                             );
-
                         }
                         //skip product
                         if ($proDes['language_id'] != 1 && $productIdProd == '') {
                             //there is no product id
                             continue;
-
                         }
                         //update product
                         if ($proDes['language_id'] != 1 && $productIdProd != '') {
                             $this->updateProductData($proDes, $productIdProd);
                         }
-
                     }
                     $ncounter++;
                     $this->setProductprogress($ncounter);
@@ -717,7 +704,6 @@ class ExternalDb
                 //$this->logger->critical($e->getMessage());
                 return $e->getMessage() . '---' . $sku;
             }
-
         }
     }
 
@@ -734,7 +720,6 @@ class ExternalDb
                 $catId = $catDataParent->getFirstItem()->getId();
                 $arrCatIds[] = $catId;
             }
-
         }
         $this->productModel->setCategoryIds($arrCatIds);
     }
@@ -761,8 +746,7 @@ class ExternalDb
                 'attribute_set_name',
                 "$atrSetName"
             );
-            foreach ($attributeSet as $attr):
-
+            foreach ($attributeSet as $attr) :
                 $attributeSetId = $attr->getAttributeSetId();
             endforeach;
             return $attributeSetId;
@@ -864,14 +848,11 @@ class ExternalDb
         //end language check
         $localStores = $this->storeManagerInterface->getStores();
         foreach ($localStores as $mStoreLang) {
-
             if (strtolower($resultLang[0]['name']) == strtolower($mStoreLang['name'])) {
                 //$addStore = false;
                 //echo "in matching";
                 $storeId = $mStoreLang['store_id'];
-
             }
-
         }
         return $storeId;
     }
@@ -900,7 +881,6 @@ class ExternalDb
             if (isset($arrCustomOptoin[0]) && $arrCustomOptoin[0] != '') {
                 foreach ($arrCustomOptoin as $attribute) {
                     return $this->getOptionVersionOne($attribute);
-
                 }
             }
         }
@@ -915,7 +895,6 @@ class ExternalDb
                     $exist = false;
                     foreach ($results as $prod) {
                         $this->getCustomOptionVersionTwo($prod);
-
                     }
                     return "Customizable options has been added";
                 } catch (\Exception $e) {
@@ -962,7 +941,6 @@ class ExternalDb
                                 'sku' => '',
                                 'sort_order' => 0,
                             ];
-
                         }
 
                         $options = [
@@ -975,7 +953,6 @@ class ExternalDb
                                 'values' => $arrValue,
                             ],
                         ];
-
                     }
 
                     $product->setHasOptions(1);
@@ -984,7 +961,6 @@ class ExternalDb
                         if ($opt['default_title'] == $chooseOption) {
                             $exist = true;
                             //"product option already added";
-
                         }
                     }
                     if (!$exist) {
@@ -994,14 +970,12 @@ class ExternalDb
                                 ->setStoreId($product->getStoreId())
                                 ->addData($arrayOption);
                             $product->addOption($option);
-
                         }
                     }
                     $product->setCustomAttribute('poster_size', $selectedSize);
                     $this->productRepository->save($product);
 
                     $this->setOptionValue($nCounter);
-
                 }
                 return "Customizable options has been added";
             } catch (\Exception $e) {
@@ -1066,9 +1040,7 @@ class ExternalDb
                             'values' => $arrValue,
                         ],
                     ];
-
                 }
-
             }
 
             $product->setHasOptions(1);
@@ -1076,7 +1048,6 @@ class ExternalDb
             foreach ($product->getOptions() as $opt) {
                 if ($opt['default_title'] == $optionName) {
                     $exist = true;
-
                 }
             };
 
@@ -1087,7 +1058,6 @@ class ExternalDb
                         ->setStoreId($product->getStoreId())
                         ->addData($arrayOption);
                     $product->addOption($option);
-
                 }
             }
             $this->productRepository->save($product);

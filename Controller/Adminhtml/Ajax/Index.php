@@ -10,7 +10,7 @@ class Index extends \Magento\Backend\App\Action
     /**
      * @var \Magento\Framework\View\Result\PageFactory
      */
-    protected $_pageFactory;
+    protected $pageFactory;
     protected $modelExternalDb;
     protected $jsonFactory;
     /**
@@ -22,7 +22,7 @@ class Index extends \Magento\Backend\App\Action
         ModelExternalDb $modelExternalDb,
         JsonFactory $jsonFactory
     ) {
-        $this->_pageFactory = $pageFactory;
+        $this->pageFactory = $pageFactory;
         $this->modelExternalDb = $modelExternalDb;
         $this->jsonFactory = $jsonFactory;
         return parent::__construct($context);
@@ -39,7 +39,6 @@ class Index extends \Magento\Backend\App\Action
         } else {
             return $this->jsonFactory->create()
                 ->setData(['messageConnection' => 'Database Error:Please check your database credintials']);
-
         }
     }
 }

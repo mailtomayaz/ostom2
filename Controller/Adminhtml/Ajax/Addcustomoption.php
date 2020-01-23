@@ -10,7 +10,7 @@ class Addcustomoption extends \Magento\Framework\App\Action\Action
     /**
      * @var \Magento\Framework\View\Result\PageFactory
      */
-    protected $_pageFactory;
+    protected $pageFactory;
     protected $modelExternalDb;
     protected $jsonFactory;
     /**
@@ -22,7 +22,7 @@ class Addcustomoption extends \Magento\Framework\App\Action\Action
         ModelExternalDb $modelExternalDb,
         JsonFactory $jsonFactory
     ) {
-        $this->_pageFactory = $pageFactory;
+        $this->pageFactory = $pageFactory;
         $this->modelExternalDb=$modelExternalDb;
         $this->jsonFactory = $jsonFactory;
         return parent::__construct($context);

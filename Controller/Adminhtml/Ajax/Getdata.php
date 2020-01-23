@@ -11,7 +11,7 @@ class Getdata extends \Magento\Framework\App\Action\Action
     /**
      * @var \Magento\Framework\View\Result\PageFactory
      */
-    protected $_pageFactory;
+    protected $pageFactory;
     protected $modelExternalDb;
     protected $coreSession;
     protected $jsonFactory;
@@ -25,7 +25,7 @@ class Getdata extends \Magento\Framework\App\Action\Action
         SessionManagerInterface $coreSession,
         JsonFactory $jsonFactory
     ) {
-        $this->_pageFactory = $pageFactory;
+        $this->pageFactory = $pageFactory;
         $this->modelExternalDb=$modelExternalDb;
         $this->jsonFactory = $jsonFactory;
         $this->coreSession=$coreSession;
