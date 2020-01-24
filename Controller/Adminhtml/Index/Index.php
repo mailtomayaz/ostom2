@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Khaysoft, Inc. All rights reserved.
+ * Copyright © Embraceit, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -35,18 +35,7 @@ class Index extends Action
     }
     public function execute()
     {
-        $host = $this->scopeConfig->getValue('firstsection/firstgroup/DbHostName');
-        $database = $this->scopeConfig->getValue('firstsection/firstgroup/DbName');
-        $user = $this->scopeConfig->getValue('firstsection/firstgroup/DbUserName');
-        $dbpass = $this->scopeConfig->getValue('firstsection/firstgroup/DbPassword');
-        $dbversion = $this->scopeConfig->getValue('firstsection/firstgroup/OscVersion');
         $resultPage = $this->pageFactory->create();
-        $this->modelExternalDb->initDb();
-        $resultPage->getLayout()->getBlock('dataimprortblock')->setDbHost($host);
-        $resultPage->getLayout()->getBlock('dataimprortblock')->setDatabase($database);
-        $resultPage->getLayout()->getBlock('dataimprortblock')->setDbUser($user);
-        $resultPage->getLayout()->getBlock('dataimprortblock')->setDbPass($dbpass);
-        $resultPage->getLayout()->getBlock('dataimprortblock')->setDbVersion($dbversion);
         return $resultPage;
     }
 }
