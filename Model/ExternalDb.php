@@ -255,7 +255,7 @@ class ExternalDb
     public function setImageCategory($categoryImage)
     {
         $imageName = '';
-        if ($categoryImage == '') {
+        if ($categoryImage == '' || $this->getCategoryImagePath() == null) {
             $imageName = $categoryImage = 'dummyimage.png';
             $imgPath = BP . '/app/code/Embraceit/OscommerceToMagento/view/adminhtml/web/images/';
             //in case composer install
@@ -287,7 +287,7 @@ class ExternalDb
     public function setImageProduct($productImage)
     {
         $imageName = '';
-        if ($productImage == '') {
+        if ($productImage == '' || $this->getProductImagePath()) {
             $imageName = $productImage = 'dummyimage.png';
             //menual install path
             $imgPath = BP . '/app/code/Embraceit/OscommerceToMagento/view/adminhtml/web/images/';
@@ -760,7 +760,7 @@ class ExternalDb
                 'attribute_set_name',
                 "$atrSetName"
             );
-            foreach ($attributeSet as $attr) :
+            foreach ($attributeSet as $attr):
                 $attributeSetId = $attr->getAttributeSetId();
             endforeach;
             return $attributeSetId;
