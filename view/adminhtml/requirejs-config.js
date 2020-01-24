@@ -1,6 +1,6 @@
-var config = {        
+var config = {
     paths: {
-        'uikit': 'Embraceit_OscommerceToMagento/js/uikit.min'     
+        'uikit': 'Embraceit_OscommerceToMagento/js/uikit.min'
 
     },
     'config' : {

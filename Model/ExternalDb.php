@@ -58,6 +58,12 @@ class ExternalDb
     protected $attributeManagement;
     protected $file;
     protected $serialize;
+    protected $hostName;
+    protected $databaseName;
+    protected $databaseUser;
+    protected $databasPassword;
+    protected $osCommerceVersion;
+
     /**
      *
      * @var  Magento\Catalog\Setup\CategorySetupFactory
@@ -120,58 +126,68 @@ class ExternalDb
         $this->attributeManagement = $attributeManagement;
         $this->file = $file;
         $this->serialize = $serialize;
+        $this->hostName = $this->scopeConfig->getValue('firstsection/firstgroup/DbHostName');
+        $this->databaseUser = $this->scopeConfig->getValue('firstsection/firstgroup/DbUserName');
+        $this->databasPassword = $this->scopeConfig->getValue('firstsection/firstgroup/DbPassword');
+        $this->osCommerceVersion = $this->scopeConfig->getValue('firstsection/firstgroup/OscVersion');
+        $this->databaseName = $this->scopeConfig->getValue('firstsection/firstgroup/DbName');
         $this->initDb();
     }
     public function initDb()
     {
-        $host = $this->scopeConfig->getValue('firstsection/firstgroup/DbHostName');
-        $database = $this->scopeConfig->getValue('firstsection/firstgroup/DbName');
-        $user = $this->scopeConfig->getValue('firstsection/firstgroup/DbUserName');
-        $dbpass = $this->scopeConfig->getValue('firstsection/firstgroup/DbPassword');
-        $dbversion = $this->scopeConfig->getValue('firstsection/firstgroup/OscVersion');
-        $db = $this->connectionFactory->create([
-            'host' => $host,
-            'dbname' => $database,
-            'username' => $user,
-            'password' => $dbpass,
-            'active' => '1',
-        ]);
-        $tableToTest = $this->getDbPrefix() . 'categories';
-        try {
-            /* Some logic that could throw an Exception */
-            $select = $db->select()
-                ->from($tableToTest, '*');
-            if ($results = $db->fetchAll($select)) {
-                return true;
+        if ($this->hostName !== null) {
+            //var_dump($host);
+            //die('dsate');
+            $db = $this->connectionFactory->create([
+                'host' => $this->hostName,
+                'dbname' => $this->databaseName,
+                'username' => $this->databaseUser,
+                'password' => $this->databasPassword,
+                'active' => '1',
+            ]);
+            $tableToTest = $this->getDbPrefix() . 'categories';
+            try {
+                /* Some logic that could throw an Exception */
+                $select = $db->select()
+                    ->from($tableToTest, '*');
+                if ($results = $db->fetchAll($select)) {
+                    return true;
+                }
+            } catch (\Exception $e) {
+                //$this->logger->critical($e->getMessage());
+                return false;
             }
-        } catch (\Exception $e) {
-            //$this->logger->critical($e->getMessage());
-            return false;
         }
     }
     public function newDbConnection()
     {
-        $host = $this->scopeConfig->getValue('firstsection/firstgroup/DbHostName');
-        $database = $this->scopeConfig->getValue('firstsection/firstgroup/DbName');
-        $user = $this->scopeConfig->getValue('firstsection/firstgroup/DbUserName');
-        $dbpass = $this->scopeConfig->getValue('firstsection/firstgroup/DbPassword');
-        $dbversion = $this->scopeConfig->getValue('firstsection/firstgroup/OscVersion');
-        $db = $this->connectionFactory->create([
-            'host' => $host,
-            'dbname' => $database,
-            'username' => $user,
-            'password' => $dbpass,
-            'active' => '1',
-        ]);
-        return $db;
-    }
 
+        if ($this->hostName !== null) {
+            $db = $this->connectionFactory->create([
+                'host' => $this->hostName,
+                'dbname' => $this->databaseName,
+                'username' => $this->databaseUser,
+                'password' => $this->databasPassword,
+                'active' => '1',
+            ]);
+            return $db;
+        }
+    }
+/**
+ * Undocumented function
+ *
+ * @return int
+ */
     public function getCategoryCount()
     {
-        $select = $this->newDbConnection()->select()->from($this->getDbPrefix() . 'categories', '*');
-        if ($results = $this->newDbConnection()->fetchAll($select)) {
-            return count($results);
+        $count = 0;
+        if ($this->hostName !== null) {
+            $select = $this->newDbConnection()->select()->from($this->getDbPrefix() . 'categories', '*');
+            if ($results = $this->newDbConnection()->fetchAll($select)) {
+                return count($results);
+            }
         }
+        return $count;
     }
     public function setValue($count)
     {
@@ -424,11 +440,6 @@ class ExternalDb
                 try {
                     $this->unSetValue();
                     $this->setValue($nCounter);
-
-                    if ($nCounter > 10) {
-                        die('stoop and check');
-                        //continue;
-                    }
                     //get category information
                     $categoryParent = $category['parent_id'];
                     $categoryStatus = $category['categories_status'];
@@ -524,30 +535,37 @@ class ExternalDb
     //get total products
     public function getTotalProductsCount()
     {
-        $select = $this->newDbConnection()->select()->from($this->getDbPrefix() . 'products', 'products_id');
-        if ($results = $this->newDbConnection()->fetchAll($select)) {
-            return count($results);
+        $count = 0;
+        if ($this->hostName !== null) {
+            $select = $this->newDbConnection()->select()->from($this->getDbPrefix() . 'products', 'products_id');
+            if ($results = $this->newDbConnection()->fetchAll($select)) {
+                return count($results);
+            }
         }
+        return $count;
     }
     //get total custom option count
     public function getTotalCustomOptionCount()
     {
-
-        $customOptionName = $this->getCustomAttributeData();
-        $osVersion = $this->getOsVersion();
-        $arrCustomOptoin = explode(',', $customOptionName);
-        if ($osVersion == '1.0.0') {
-            if (isset($arrCustomOptoin[0]) && $arrCustomOptoin[0] != '') {
-                foreach ($arrCustomOptoin as $attribute) {
-                    if ($results = $this->newDbConnection()->fetchAll($this->queryCustomOptions($attribute))) {
-                        return count($results);
+        $count = 0;
+        if ($this->hostName !== null) {
+            $customOptionName = $this->getCustomAttributeData();
+            $osVersion = $this->getOsVersion();
+            $arrCustomOptoin = explode(',', $customOptionName);
+            if ($osVersion == '1.0.0') {
+                if (isset($arrCustomOptoin[0]) && $arrCustomOptoin[0] != '') {
+                    foreach ($arrCustomOptoin as $attribute) {
+                        if ($results = $this->newDbConnection()->fetchAll($this->queryCustomOptions($attribute))) {
+                            return count($results);
+                        }
                     }
                 }
+            } else {
+                //other versions of oscommerce
+                return 0;
             }
-        } else {
-            //other versions of oscommerce
-            return 0;
         }
+        return $count;
     }
 //attribute set add
 
@@ -693,10 +711,6 @@ class ExternalDb
                     }
                     $ncounter++;
                     $this->setProductprogress($ncounter);
-                    if ($ncounter > 20) {
-                        die('stoop and check');
-                        //continue;
-                    }
                 }
                 //add here
                 return "Products has been added";

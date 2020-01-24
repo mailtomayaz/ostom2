@@ -8,6 +8,7 @@ namespace Embraceit\OscommerceToMagento\Block\Adminhtml;
 
 use Embraceit\OscommerceToMagento\Model\ExternalDb as ModelExternalDb;
 use Magento\Backend\Block\Template;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Data\Form\FormKey;
 use Magento\Framework\Session\SessionManagerInterface;
 
@@ -16,6 +17,13 @@ use Magento\Framework\Session\SessionManagerInterface;
  */
 class Datacheck extends Template
 {
+    const HOST_NAME = 'Configure Host Name';
+    const DATABASE_NAME = 'Configure Database';
+    const USER_NAME = 'Configure User Name';
+    const DATABAS_PASSWORD = 'Configure Password';
+    const OSCOMMERCE_VERSION = 'Configure OsCommerce Version';
+    const CATEGORY_IMAGE_PATH = 'Category Image Path';
+    const PRODUCT_IMAGE_PATH='Product Image Path';
     /**
      * @var modelExternalDb
      */
@@ -24,12 +32,12 @@ class Datacheck extends Template
      * @var coreSession
      */
     protected $coreSession;
-    
+
     /**
      * @var formKey
      */
     protected $formKey;
-
+    protected $scopeConfig;
     /**
      * @param \Magento\Backend\Block\Template\Context           $context
      * @param Embraceit\OscommerceToMagento\Model\ExternalDb    $modelExternalDb
@@ -42,10 +50,12 @@ class Datacheck extends Template
         ModelExternalDb $modelExternalDb,
         SessionManagerInterface $coreSession,
         FormKey $formKey,
+        ScopeConfigInterface $scopeConfig,
         array $data = []
     ) {
         $this->modelExternalDb = $modelExternalDb;
         $this->formKey = $formKey;
+        $this->scopeConfig = $scopeConfig;
         parent::__construct($context, $data);
     }
 
@@ -158,11 +168,24 @@ class Datacheck extends Template
     }
     public function getProductImagePath()
     {
-        return $this->modelExternalDb->getImagePathProduct();
+       // return $this->modelExternalDb->getImagePathProduct();
+
+        $host = $this->scopeConfig->getValue('firstsection/firstgroup/productImagePath');
+        if ($host !== null) {
+            return $host;
+        } else {
+            return self::PRODUCT_IMAGE_PATH;
+        }
     }
     public function getCategoryImagePath()
     {
-        return $this->modelExternalDb->getImagePathCategory();
+        //return $this->modelExternalDb->getImagePathCategory();
+        $host = $this->scopeConfig->getValue('firstsection/firstgroup/categoryImagePath');
+        if ($host !== null) {
+            return $host;
+        } else {
+            return self::CATEGORY_IMAGE_PATH;
+        }
     }
     // public function getAttributesetLang()
     // {
@@ -175,5 +198,52 @@ class Datacheck extends Template
     public function getAtributeByName()
     {
         return $this->modelExternalDb->getAttributeByName();
+    }
+    //public function
+    public function getDatabaseHostName()
+    {
+        $host = $this->scopeConfig->getValue('firstsection/firstgroup/DbHostName');
+        if ($host !== null) {
+            return $host;
+        } else {
+            return self::HOST_NAME;
+        }
+    }
+    public function getDatabaseName()
+    {
+        $host = $this->scopeConfig->getValue('firstsection/firstgroup/DbName');
+        if ($host !== null) {
+            return $host;
+        } else {
+            return self::DATABASE_NAME;
+        }
+    }
+
+    public function getDatabaseUser()
+    {
+        $host = $this->scopeConfig->getValue('firstsection/firstgroup/DbUserName');
+        if ($host !== null) {
+            return $host;
+        } else {
+            return self::USER_NAME;
+        }
+    }
+    public function getDatabasePassword()
+    {
+        $host = $this->scopeConfig->getValue('firstsection/firstgroup/DbPassword');
+        if ($host !== null) {
+            return $host;
+        } else {
+            return self::DATABAS_PASSWORD;
+        }
+    }
+    public function getOsCommerceVersion()
+    {
+        $host = $this->scopeConfig->getValue('firstsection/firstgroup/OscVersion');
+        if ($host !== null) {
+            return $host;
+        } else {
+            return self::OSCOMMERCE_VERSION;
+        }
     }
 }

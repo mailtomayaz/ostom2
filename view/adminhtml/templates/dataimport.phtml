@@ -33,12 +33,12 @@
 
                         <tbody>
                             <tr>
-                                <td><?=  /* @noEscape */ $block->getDbHost(); ?></td>
-                                <td><?= /* @noEscape */ $block->getDatabase(); ?></td>
-                                <td><?= /* @noEscape */ $block->getDbUser(); ?></td>
-                                <td><?= /* @noEscape */ $block->getDbPass(); ?></td>
+                                <td><?=  /* @noEscape */ $block->getDatabaseHostName();//$block->getDbHost(); ?></td>
+                                <td><?= /* @noEscape */ $block->getDatabaseName(); ?></td>
+                                <td><?= /* @noEscape */ $block->getDatabaseUser(); ?></td>
+                                <td><?= /* @noEscape */ $block->getDatabasePassword(); ?></td>
                                 <td></td>
-                                <td><?= /* @noEscape */ $block->getDbVersion(); ?></td>
+                                <td><?= /* @noEscape */ $block->getOsCommerceVersion(); ?></td>
                                 <td><button class="checkConnection">Test Connection</button></td>
                             </tr>
 
