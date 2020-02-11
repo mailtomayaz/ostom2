@@ -6,7 +6,7 @@ use Magento\Framework\Controller\Result\JsonFactory;
 use Embraceit\OscommerceToMagento\Model\ExternalDb as ModelExternalDb;
 use Magento\Framework\Session\SessionManagerInterface;
 
-class Getdata extends \Magento\Framework\App\Action\Action
+class Getdata extends  \Magento\Backend\App\Action
 {
     /**
      * @var \Magento\Framework\View\Result\PageFactory
@@ -19,7 +19,7 @@ class Getdata extends \Magento\Framework\App\Action\Action
      * @param \Magento\Framework\App\Action\Context $context
      */
     public function __construct(
-        \Magento\Framework\App\Action\Context $context,
+        \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\View\Result\PageFactory $pageFactory,
         ModelExternalDb $modelExternalDb,
         SessionManagerInterface $coreSession,

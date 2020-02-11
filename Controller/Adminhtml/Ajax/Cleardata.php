@@ -6,7 +6,7 @@ use Embraceit\OscommerceToMagento\Model\ExternalDb as ModelExternalDb;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Session\SessionManagerInterface;
 
-class Getproductdata extends  \Magento\Backend\App\Action
+class Cleardata extends  \Magento\Backend\App\Action
 {
     /**
      * @var \Magento\Framework\View\Result\PageFactory
@@ -15,6 +15,9 @@ class Getproductdata extends  \Magento\Backend\App\Action
     protected $modelExternalDb;
     protected $coreSession;
     protected $jsonFactory;
+    const CLEARED_DATA = 'data has Clean';
+    const CLEARED_ERROR = 'There is error in clearning data please try again';
+    const DEFAULT_MESSAGE = 'No action taken';
     /**
      * @param \Magento\Framework\App\Action\Context $context
      */
@@ -38,10 +41,26 @@ class Getproductdata extends  \Magento\Backend\App\Action
      */
     public function execute()
     {
-        $countRecord = $this->modelExternalDb->getProductprogress();
-        if ($countRecord == '') {
-            $countRecord = 0;
+        $post = $this->getRequest()->getPostValue();
+        if (isset($post['clean_type'])) {
+            switch ($post['clean_type']) {
+                case 'category':
+                    $Isdelete = $this->modelExternalDb->deleteCategoryData();
+                    return $this->jsonFactory->create()->setData(
+                        ['message' => $post['clean_type'] . ' ' . self::CLEARED_DATA]
+                    );
+                    break;
+                case 'product':
+                    $Isdelete = $this->modelExternalDb->deleteProductData();
+                    return $this->jsonFactory->create()->setData(
+                        ['message' => $post['clean_type'] . ' ' . self::CLEARED_DATA]
+                    );
+                    break;
+                default:
+                    return $this->jsonFactory->create()->setData(
+                        ['message' => self::DEFAULT_MESSAGE]
+                    );
+            }
         }
-        return $this->jsonFactory->create()->setData(['counter' => $countRecord]);
     }
 }

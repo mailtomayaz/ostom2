@@ -40,9 +40,16 @@
               <field id="customAttribute" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="103" type="text">
             <label>custom attribute name comma (,) seperated</label>
             </field>
+            <field id="customAttributeTitle" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="103" type="text">
+            <label>custom attribute title comma (,) seperated</label>
+            </field>
             <field id="OscVersion" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="104" type="select">
             <label>Oscommerece Version</label>
             <source_model>Embraceit\OscommerceToMagento\Model\AdminArray</source_model>
+            </field>
+                        <field id="dataChunkSize" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="104" type="select">
+            <label>Data Import Chunk size </label>
+            <source_model>Embraceit\OscommerceToMagento\Model\AdminChunkArray</source_model>
             </field>
         </group>
     </section>

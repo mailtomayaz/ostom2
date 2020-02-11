@@ -372,7 +372,7 @@ class ExternalDb
         $checkCat = $this->categoryFactory->create()
             ->getCollection()
             ->addAttributeToFilter('category_id', $description["categories_id"]);
-
+        
         $parentCatId = $checkCat->getFirstItem()->getParentId();
         if ($parentCatId == null || $parentCatId == '') {
             $result = $this->repository->save($categoryData);
@@ -423,7 +423,7 @@ class ExternalDb
                 $urlKey = $this->removeAccent($description["categories_name"]);
                 $urlKey = $this->removeSpecialChar($urlKey);
                 $urlKey = $urlKey . '-' . $description["categories_id"];
-
+                
                 $checkCat = $this->collectionFactory->create();
                 $checkCat->setStore($storeId);
                 $checkCat->addAttributeToFilter('url_key', $urlKey);
@@ -577,7 +577,7 @@ class ExternalDb
             if ($osVersion == '1.0.0') {
                 if (isset($arrCustomOptoin[0]) && $arrCustomOptoin[0] != '') {
                     foreach ($arrCustomOptoin as $attribute) {
-                        if ($results = $this->newDbConnection()->fetchAll($this->queryCustomOptionsCount($attribute))) {
+                        if ($results = $this->newDbConnection()->fetchAll($this->queryCustomOptions($attribute))) {
                             return count($results);
                         }
                     }
@@ -632,11 +632,11 @@ class ExternalDb
         return 'check';
     }
     //add products
-    public function addProducts($startLimit, $totalLimit)
+    public function addProducts()
     {
         $this->addAttributeSet();
 
-        if ($results = $this->newDbConnection()->fetchAll($this->getAllProductDetials($startLimit, $totalLimit))) {
+        if ($results = $this->newDbConnection()->fetchAll($this->getAllProductDetials())) {
             $ncounter = 0;
             $nCounter = 0;
             $catId = '';
@@ -645,18 +645,15 @@ class ExternalDb
             $prodSku = '';
             $pImage = '';
             $sku = '';
-            $flag = true;
             try {
                 foreach ($results as $product) {
                     //progress bar unset data
                     $this->unSetProductprogress();
-                    $ncounter++;
-                    $this->setProductprogress($ncounter);
                     // if ($ncounter > 50) {
                     //     die('stop annd check');
                     // }
                     //skip and check if this product exist in database
-
+                    $ncounter++;
                     $checkSku = 'sku' . '-' . $product['products_id'];
                     $isProductExist = $this->productCollectionFactory->create()
                         ->addAttributeToSelect('*')
@@ -744,16 +741,14 @@ class ExternalDb
                         }
                     }
 
+                    $this->setProductprogress($ncounter);
                 }
                 //add here
-                //return "Products has been added";
-                return $flag;
+                return "Products has been added";
             } catch (\Exception $e) {
                 //$this->logger->critical($e->getMessage());
-                $flag = false;
                 return $e->getMessage();
             }
-            return $flag;
         }
     }
 
@@ -912,16 +907,12 @@ class ExternalDb
     {
         return $this->scopeConfig->getValue('firstsection/firstgroup/customAttribute');
     }
-    public function getCustomAttributeDataTitle()
-    {
-        return $this->scopeConfig->getValue('firstsection/firstgroup/customAttributeTitle');
-    }
     public function getOsVersion()
     {
         return $this->scopeConfig->getValue('firstsection/firstgroup/OscVersion');
     }
 //add customizable options
-    public function addCustomOption($startLimit, $totalLimit)
+    public function addCustomOption()
     {
         $productId = '';
         $productIdProd = '';
@@ -930,14 +921,13 @@ class ExternalDb
 
         $chooseOption = 'Choose size';
         $customOptionName = $this->getCustomAttributeData();
-        $customAttributeTitle = $this->getCustomAttributeDataTitle();
         $osVersion = $this->getOsVersion();
-        $arrCustomAttributeTitle = explode(',', $customAttributeTitle);
+
         $arrCustomOptoin = explode(',', $customOptionName);
         if ($osVersion == '1.0.0') {
             if (isset($arrCustomOptoin[0]) && $arrCustomOptoin[0] != '') {
-                foreach ($arrCustomOptoin as $key => $attribute) {
-                    return $this->getOptionVersionOne($attribute, $startLimit, $totalLimit,$arrCustomAttributeTitle[$key] );
+                foreach ($arrCustomOptoin as $attribute) {
+                    return $this->getOptionVersionOne($attribute);
                 }
             }
         }
@@ -962,13 +952,9 @@ class ExternalDb
         }
     }
     //
-    public function getOptionVersionOne($attribute, $startLimit, $totalLimit, $attributeTitle = '')
+    public function getOptionVersionOne($attribute)
     {
-        if ($attributeTitle == '') {
-            $attributeTitle = 'Default';
-        }
-
-        if ($results = $this->newDbConnection()->fetchAll($this->queryCustomOptions($attribute, $startLimit, $totalLimit))) {
+        if ($results = $this->newDbConnection()->fetchAll($this->queryCustomOptions($attribute))) {
             $nCounter = 0;
             try {
                 foreach ($results as $prod) {
@@ -1007,7 +993,7 @@ class ExternalDb
                         $options = [
 
                             [
-                                'title' => $attributeTitle,
+                                'title' => $chooseOption,
                                 'type' => 'drop_down',
                                 'is_require' => 1,
                                 'sort_order' => 0,
@@ -1019,7 +1005,7 @@ class ExternalDb
                     $product->setHasOptions(1);
                     $product->setCanSaveCustomOptions(true);
                     foreach ($product->getOptions() as $opt) {
-                        if ($opt['default_title'] == $attributeTitle) {
+                        if ($opt['default_title'] == $chooseOption) {
                             $exist = true;
                             //"product option already added";
                         }
@@ -1045,7 +1031,7 @@ class ExternalDb
             }
         }
     }
-    public function checkOptionPrice($optionPrice, $proSize)
+    public function checkOptionPrice($optionPrice,$proSize)
     {
         if (abs($optionPrice) == 0) {
             $selectedSize = $proSize;
@@ -1170,7 +1156,7 @@ class ExternalDb
         return $select;
     }
 
-    public function queryCustomOptions($attribute, $startLimit, $totalLimit)
+    public function queryCustomOptions($attribute)
     {
         $select = $this->newDbConnection()
             ->select()
@@ -1179,25 +1165,9 @@ class ExternalDb
             ->where($this->getDbPrefix() . 'products.' . $attribute . '  <> "" ')
             ->where($this->getDbPrefix() . 'products.' . $attribute . '_prices  <> "s:0:\"\"" ')
             ->order($this->getDbPrefix() . 'products.products_id', 'ASC');
-        $limit = " LIMIT $startLimit,$totalLimit";
-        //$select
-        return $select . $limit;
-        //return $select;
-    }
-    public function queryCustomOptionsCount($attribute)
-    {
-        $select = $this->newDbConnection()
-            ->select()
-            ->from($this->getDbPrefix() . 'products')
-            ->where($this->getDbPrefix() . 'products.' . $attribute . '  <> "N;"')
-            ->where($this->getDbPrefix() . 'products.' . $attribute . '  <> "" ')
-            ->where($this->getDbPrefix() . 'products.' . $attribute . '_prices  <> "s:0:\"\"" ')
-            ->order($this->getDbPrefix() . 'products.products_id', 'ASC');
-        //$limit = " LIMIT $startLimit,$totalLimit";
-        //$select;
-        //return $select . $limit;
         return $select;
     }
+
     public function queryCustomProductAttributes()
     {
         $select = $this->newDbConnection()
@@ -1324,15 +1294,12 @@ class ExternalDb
         $urlKey = preg_replace('/--/', '-', $urlKey);
         return $urlKey;
     }
-    public function getAllProductDetials($startLimit, $totalLimit)
+    public function getAllProductDetials()
     {
         $select = $this->newDbConnection()
             ->select()
             ->from($this->getDbPrefix() . 'products', '*')
             ->order('products_id', 'ASC');
-        $limit = " LIMIT $startLimit,$totalLimit";
-        //$select
-        return $select . $limit;
         return $select;
     }
     //get all categories description by ID

@@ -1,0 +1,741 @@
+<div id="loader"></div>
+<span>
+    <div id='progressCounter'></div>
+</span>
+<button type="button" id="openModel" class="btn btn-primary" style="display:none;">Open Model</button>
+<div id="myModel">
+    <h1>Status</h1>
+    <div class="categorystatus">Content</div>
+</div>
+<div id="container" class="main-col">
+    <div class="row">
+        <div class="col-m-8 col-m-push-2">
+            <div id="element" class="collapsibleContainer">
+            <div class="collapsibleTab" data-role="collapsible">
+                    <div data-role="trigger">
+                        <span>Clean Data</span>
+                    </div>
+                </div>
+                <div class="collapsibleContent" data-role="content">
+
+                    <table class="bottomBorder">
+                        <!-- <caption>Categories</caption> -->
+                        <thead>
+                            <tr>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col">Clean All Categories Data</th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col">Clean All Products Data</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td><button
+                                        class="clean-category-data">Clean All Categories</button></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td> <button class="clean-products-data">Clean All Products </button></td>
+                            </tr>
+                            <tr>
+                                <td colspan="7">
+                                    <!--progress bar-->
+                                    <div style="width: 100%;display:none" class="progressdivoptions">
+                                        <div class="option-status-progress-bar"></div>
+                                        <div id="progressbaroption" class="option-progress option-progress-success">
+                                            <div class="option-progress-bar" style="width: 0%;"></div>
+                                        </div>
+                                    </div>
+                                    <!--progress bar-->
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+                </div>
+                <div class="collapsibleTab" data-role="collapsible">
+                    <div data-role="trigger">
+                        <span>Database Connection</span>
+                    </div>
+                </div>
+                <div class="collapsibleContent" data-role="content">
+                    <table class="bottomBorder">
+                        <!-- <caption>Test Connection</caption> -->
+                        <thead>
+                            <tr>
+                                <th scope="col">Host</th>
+                                <th scope="col">Database Name</th>
+                                <th scope="col">User Name</th>
+                                <th scope="col">Password</th>
+                                <th scope="col">Port</th>
+                                <th scope="col">OsCommerce Version</th>
+                                <th scope="col">Test Connection</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td><?=/* @noEscape */$block->getDatabaseHostName();?></td>
+                                <td><?=/* @noEscape */$block->getDatabaseName();?></td>
+                                <td><?=/* @noEscape */$block->getDatabaseUser();?></td>
+                                <td><?=/* @noEscape */$block->getDatabasePassword();?></td>
+                                <td></td>
+                                <td><?=/* @noEscape */$block->getOsCommerceVersion();?></td>
+                                <td><button class="checkConnection">Test Connection</button></td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="collapsibleTab" data-role="collapsible">
+                    <div data-role="trigger">
+                        <span>Import Categories</span>
+                    </div>
+                </div>
+                <div class="collapsibleContent" data-role="content">
+                    <table class="bottomBorder">
+                        <!-- <caption>Categories</caption> -->
+                        <thead>
+                            <tr>
+                                <th scope="col">Total</th>
+                                <th scope="col">Image Path</th>
+                                <th scope="col"># of translations</th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td><?=/* @noEscape */$block->getCategoryInfo();?></td>
+                                <td><?=/* @noEscape */$block->getCategoryImagePath();?></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><button class="importCategories">Import Categories</button></td>
+                            </tr>
+                            <tr>
+                                <td colspan="7">
+                                    <!--progress bar-->
+                                    <div style="width: 100%;display:none" class="progressdiv">
+                                        <div class="status-progress-bar"></div>
+                                        <div id="progressbar" class="uk-progress uk-progress-success">
+                                            <div class="uk-progress-bar" style="width: 0%;"></div>
+                                        </div>
+                                    </div>
+                                    <!--progress bar-->
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="collapsibleTab" data-role="collapsible">
+                    <div data-role="trigger">
+                        <span>Import Products</span>
+                    </div>
+                </div>
+                <div class="collapsibleContent" data-role="content">
+
+                    <table class="bottomBorder">
+                        <!-- <caption>Categories</caption> -->
+                        <thead>
+                            <tr>
+                                <th scope="col">Total</th>
+                                <th scope="col">Image Path</th>
+                                <th scope="col"># of translations</th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td><?=/* @noEscape */$block->getProductCount();?></td>
+                                <td><?=/* @noEscape */$block->getProductImagePath();?></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td> <button class="importProducts">Import Products</button></td>
+                            </tr>
+                            <tr>
+                                <td colspan="7">
+                                    <!--progress bar-->
+                                    <div style="width: 100%;display:none" class="progressdivproduct">
+                                        <div class="product-status-progress-bar"></div>
+                                        <div id="progressbarproduct" class="product-progress product-progress-success">
+                                            <div class="product-progress-bar" style="width: 0%;"></div>
+                                        </div>
+                                    </div>
+                                    <!--progress bar-->
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+                </div>
+                <div class="collapsibleTab" data-role="collapsible">
+                    <div data-role="trigger">
+                        <span>Import Custom Options</span>
+                    </div>
+                </div>
+                <div class="collapsibleContent" data-role="content">
+
+                    <table class="bottomBorder">
+                        <!-- <caption>Categories</caption> -->
+                        <thead>
+                            <tr>
+                                <th scope="col">Total</th>
+                                <th scope="col"></th>
+                                <th scope="col"># of translations</th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td><?=/* @noEscape */$block->getCustomOptionCount();?></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td> <button class="importProductsCustomizeOptions">Import Customizeable
+                                        Options</button></td>
+                            </tr>
+                            <tr>
+                                <td colspan="7">
+                                    <!--progress bar-->
+                                    <div style="width: 100%;display:none" class="progressdivoptions">
+                                        <div class="option-status-progress-bar"></div>
+                                        <div id="progressbaroption" class="option-progress option-progress-success">
+                                            <div class="option-progress-bar" style="width: 0%;"></div>
+                                        </div>
+                                    </div>
+                                    <!--progress bar-->
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div id="ajaxresponse"></div>
+<?php
+// //$ajaxurl = $block->getAjaxUrl();
+
+?>
+<!-- <script type="text/x-magento-init">
+        {
+            "*": {
+                "Embraceit_OscommerceToMagento/js/customjs": {
+                    "AjaxUrl": "<?=$block->getBaseUrl()?>"+'admin/dataimport/Ajax/index',
+                    "formKey": "<?=$block->getFormKey()?>",
+                }
+            }
+        }
+</script> -->
+<script type="text/javascript">
+require([
+    "jquery",
+    "Magento_Ui/js/modal/modal",
+    'accordion'
+], function($, modal) {
+    $(document).ready(function() {
+        chunkSize =  Number("<?=/* @noEscape */$block->getChunkSize();?>");
+        totalLimit =  Number("<?=/* @noEscape */$block->getChunkSize();?>");
+        catCount = Number("<?=/* @noEscape */$block->getCategoryInfo();?>");
+
+        //check database connection
+        $('.checkConnection').click(function() {
+            var customurl = "<?=/* @noEscape */$block->getBaseUrl()?>" +
+                'admin/dataimport/Ajax/index';
+            $.ajax({
+                url: customurl,
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    form_key: "<?=/* @noEscape */$block->getFormKey();?>",
+                },
+                complete: function(response) {
+                    console.log(response.responseJSON);
+                    msg = response.responseJSON.messageConnection;
+                    $('.dataimportdiv').css('display', 'block');
+                    alert(msg);
+                },
+                error: function(xhr, status, errorThrown) {
+                    console.log('Error happens. Try again.');
+                }
+            });
+        });
+        //
+        //progress counter
+        function progressCounter(chunkSize, numberOfChunck, chunkNumber) {
+            var barValue;
+            var animate = setInterval(function() {
+                var customurl = "<?=/* @noEscape */$block->getBaseUrl()?>" +
+                    'admin/dataimport/Ajax/Getdata';
+                var bar = document.getElementById('progressbar');
+                bar.max = chunkSize;
+                bar.value = 1; // completed Steps
+                $.ajax({
+                    url: customurl,
+                    type: 'POST',
+                    dataType: 'json',
+                    asyn: false,
+                    data: {
+                        form_key: "<?=/* @noEscape */$block->getFormKey();?>",
+                    },
+                    success: function(response) {
+
+                        msg = response.counter;
+                        console.log(response.counter);
+                        if (typeof response.counter == 'undefined') {
+                            msg = 0;
+                        }
+                        barValue = msg;
+                        var barmessage = $('.uk-progress-bar');
+                        var statusmessage = $('.status-progress-bar');
+                        var percent = Math.floor((barValue / chunkSize) *
+                            100);
+                        statusmessage.text(barValue + ' out of ' + chunkSize +
+                            ' (' + percent + ' %) Completed! Total Chunks ' +
+                            Math.round(numberOfChunck) + ' Processing Chunk ' +
+                            Number(chunkNumber + 1));
+                        barmessage.css({
+                            'width': percent + '%',
+                            'background': 'green'
+                        });
+
+                        if (barValue >= bar.max) {
+                            clearInterval(animate);
+                        }
+                        //return barValue;
+                    },
+                    error: function(xhr, status, errorThrown) {
+                        console.log('Error happens. Try again.');
+                    }
+                });
+                return barValue;
+            }, 5000);
+            //return barValue;
+        }
+     //progress counter
+     function progressCounterProduct(chunkSize, numberOfChunck, chunkNumber) {
+            var barValue;
+            var animate = setInterval(function() {
+                var customurl = "<?=/* @noEscape */$block->getBaseUrl()?>" +
+                    'admin/dataimport/Ajax/Getdata';
+                var bar = document.getElementById('progressbar');
+                bar.max = chunkSize;
+                bar.value = 1; // completed Steps
+                $.ajax({
+                    url: customurl,
+                    type: 'POST',
+                    dataType: 'json',
+                    asyn: false,
+                    data: {
+                        form_key: "<?=/* @noEscape */$block->getFormKey();?>",
+                    },
+                    success: function(response) {
+
+                        msg = response.counter;
+                        console.log(response.counter);
+                        if (typeof response.counter == 'undefined') {
+                            msg = 0;
+                        }
+                        barValue = msg;
+                        var barmessage = $('.uk-progress-bar');
+                        var statusmessage = $('.status-progress-bar');
+                        var percent = Math.floor((barValue / chunkSize) *
+                            100);
+                        statusmessage.text(barValue + ' out of ' + chunkSize +
+                            ' (' + percent + ' %) Completed! Total Chunks ' +
+                            Math.round(numberOfChunck) + ' Processing Chunk ' +
+                            Number(chunkNumber + 1));
+                        barmessage.css({
+                            'width': percent + '%',
+                            'background': 'green'
+                        });
+
+                        if (barValue >= bar.max) {
+                            clearInterval(animate);
+                        }
+                        //return barValue;
+                    },
+                    error: function(xhr, status, errorThrown) {
+                        console.log('Error happens. Try again.');
+                    }
+                });
+                return barValue;
+            }, 5000);
+            //return barValue;
+        }
+        function getAjaxData(index, ajaxQue, recordLimit, startAt, totalChunks) {
+            if (Number(index + 1) == Number(totalChunks[index])) {
+                //remaning items
+                chunkSize = Number(catCount) % Number(chunkSize);
+            }
+            realCounter = progressCounter(chunkSize, totalChunks[index], index);
+            if (typeof realCounter === 'undefined') {
+                realCounter = 0;
+            }
+            $.ajax({
+                url: ajaxQue[index],
+                data: {
+                    form_key: "<?=/* @noEscape */$block->getFormKey();?>",
+                    start_limit: recordLimit[index],
+                    total_limit: startAt[index]
+                },
+                beforeSend: function() {
+                    $('.importCategories').prop('disabled', true);
+                    $('.progressdiv').css('display', 'block');
+
+                },
+                success: function(response) {
+                    //console.log(response.importStatus);
+                    if(response.importStatus != true){
+                        //console.log('return error message and stop');
+                        $('.dataimportdiv').css('display', 'block');
+                            message = response.importStatus;
+                            //$('#loader').hide();
+                            $(".categorystatus").html(message);
+                            $("#openModel").trigger('click');
+                            $('.importCategories').prop('disabled', false);
+                            return;
+                    }
+                    index++;
+                    if (ajaxQue[index] != undefined) {
+
+                        getAjaxData(index, ajaxQue, recordLimit, startAt, totalChunks);
+
+                    }
+                    if (Number(index + 1) == Number(totalChunks[index])) {
+                        if (Number(realCounter) == chunkSize) {
+                            $('.dataimportdiv').css('display', 'block');
+                            message = 'Categories has been added';
+                            $(".categorystatus").html(message);
+                            $("#openModel").trigger('click');
+                            $('.importCategories').prop('disabled', false);
+                        }
+                    }
+
+                },
+                    error: function(xhr, status, errorThrown) {
+                        console.log('Error happens. Try again.');
+                    }
+            });
+        }
+        $('.importCategories').click(function() {
+
+            var customurlCat = "<?=/* @noEscape */$block->getBaseUrl()?>" +
+                'admin/dataimport/Ajax/Addcategories';
+            totalChunks = catCount / chunkSize;
+            numberOfChunks = Math.round(totalChunks);
+            chunck = Number(numberOfChunks);
+            var ajaxQue = [];
+            var recordLimit = [];
+            var startAt = [];
+            var totalChunks = [];
+            for (i = 0; i < numberOfChunks; i++) {
+                ajaxQue[i] = customurlCat;
+                recordLimit[i] = Number(i * chunkSize);
+                startAt[i] = totalLimit;
+                totalChunks[i] = chunck;
+            }
+            //recordLimit
+            var index = 0;
+            getAjaxData(index, ajaxQue, recordLimit, startAt, totalChunks)
+        });
+
+
+        //import products
+        $('.importProducts').click(function() {
+
+            var customurlproduct = "<?=/* @noEscape */$block->getBaseUrl()?>" +
+                'admin/dataimport/Ajax/Addproducts';
+            var animate = setInterval(function() {
+                var customurl = "<?=/* @noEscape */$block->getBaseUrl()?>" +
+                    'admin/dataimport/Ajax/Getproductdata';
+                var bar = document.getElementById('progressbarproduct');
+                bar.max = "<?=/* @noEscape */$block->getProductCount();?>";
+                bar.value = 1; // completed Steps
+                $.ajax({
+                    url: customurl,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        form_key: "<?=/* @noEscape */$block->getFormKey();?>",
+                    },
+                    success: function(response) {
+                        msg = response.counter;
+                        console.log(response);
+                        if (typeof response.counter == 'undefined') {
+                            msg = 0;
+                        }
+                        barValue = msg;
+                        var barmessage = $('.product-progress-bar');
+                        var statusmessage = $(
+                            '.product-status-progress-bar');
+                        var percent = Math.floor((barValue / bar.max) *
+                            100);
+                        statusmessage.text(barValue + ' out of ' + bar.max +
+                            ' (' + percent + ' %) Completed');
+                        barmessage.css({
+                            'width': percent + '%',
+                            'background': 'green'
+                        });
+
+                        if (barValue >= bar.max) {
+                            clearInterval(animate);
+                        }
+                    },
+                    error: function(xhr, status, errorThrown) {
+                        console.log('Error happens. Try again.');
+                    }
+                });
+
+            }, 1000);
+
+
+            var xhr = $.ajax({
+                url: customurlproduct,
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    form_key: "<?=/* @noEscape */$block->getFormKey();?>",
+                },
+                beforeSend: function() {
+                    $('.importProducts').prop('disabled', true);
+                    $('.progressdivproduct').css('display', 'block');
+
+                },
+                complete: function(response) {
+                    msg = response.responseJSON.importStatus;
+                    $('.dataimportdiv').css('display', 'block');
+                    $(".categorystatus").html(msg);
+                    $("#openModel").trigger('click');
+                    $('.importProducts').prop('disabled', false);
+                    clearInterval(animate);
+                },
+                error: function(xhr, status, errorThrown) {
+                    $('.importProducts').prop('disabled', false);
+                    clearInterval(animate);
+                }
+            });
+
+
+        });
+
+        //import product customizable options
+
+        $('.importProductsCustomizeOptions').click(function() {
+
+            var customurlOption = "<?=/* @noEscape */$block->getBaseUrl()?>" +
+                'admin/dataimport/Ajax/Addcustomoption';
+
+            var animate = setInterval(function() {
+                var customurl = "<?=/* @noEscape */$block->getBaseUrl()?>" +
+                    'admin/dataimport/Ajax/Getdataoptions';
+                var bar = document.getElementById('progressbaroption');
+                bar.max = "<?=/* @noEscape */$block->getCustomOptionCount();?>";
+                bar.value = 1; // completed Steps
+                $.ajax({
+                    url: customurl,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        form_key: "<?=/* @noEscape */$block->getFormKey();?>",
+                    },
+                    success: function(response) {
+                        msg = response.counter;
+                        if (typeof response.counter == 'undefined') {
+                            msg = 0;
+                        }
+                        barValue = msg;
+                        var barmessage = $('.option-progress-bar');
+                        var statusmessage = $(
+                            '.option-status-progress-bar');
+                        var percent = Math.floor((barValue / bar.max) *
+                            100);
+                        statusmessage.text(barValue + ' out of ' + bar.max +
+                            ' (' + percent + ' %) Completed');
+                        barmessage.css({
+                            'width': percent + '%',
+                            'background': 'green'
+                        });
+
+                        if (barValue >= bar.max) {
+                            clearInterval(animate);
+                        }
+                    },
+                    error: function(xhr, status, errorThrown) {
+                        console.log('Error happens. Try again.');
+                    }
+                });
+
+            }, 1000);
+
+            $.ajax({
+
+                url: customurlOption,
+                type: 'POST',
+                dataType: 'json',
+                data: {
+
+                    form_key: "<?=/* @noEscape */$block->getFormKey();?>",
+                },
+                beforeSend: function() {
+                    $('.importProductsCustomizeOptions').prop('disabled', true);
+                    $('.progressdivoptions').css('display', 'block');
+
+                },
+                complete: function(response) {
+                    msg = response.responseJSON.importStatus;
+                    $('.dataimportdiv').css('display', 'block');
+                    $(".categorystatus").html(msg);
+                    $("#openModel").trigger('click');
+                    $('.importProductsCustomizeOptions').prop('disabled', false);
+                    clearInterval(animate);
+
+                },
+                error: function(xhr, status, errorThrown) {
+                    console.log('Error happens. Try again.');
+                    $('.importProductsCustomizeOptions').prop('disabled', false);
+                    clearInterval(animate);
+                }
+            });
+
+
+        });
+        //remove category data
+        $('.clean-category-data').click(function() {
+            var url = "<?=/* @noEscape */$block->getBaseUrl()?>" +
+                'admin/dataimport/Ajax/Cleardata';
+            $.ajax({
+                url: url,
+                type: 'POST',
+                dataType: 'json',
+                showLoader: true,
+                data: {
+                    form_key: "<?=/* @noEscape */$block->getFormKey();?>",
+                    clean_type: 'category'
+                },
+                beforeSend: function() {
+                    $('#loader').show();
+                },
+                complete: function(response) {
+                    msg = response.responseJSON.message;
+                    $('#loader').hide();
+                    alert(msg);
+
+                },
+                error: function(xhr, status, errorThrown) {},
+                success: function() {}
+            });
+
+        });
+        //clean product data
+        $('.clean-products-data').click(function() {
+            var url = "<?=/* @noEscape */$block->getBaseUrl()?>" +
+                'admin/dataimport/Ajax/Cleardata';
+            $.ajax({
+                url: url,
+                type: 'POST',
+                dataType: 'json',
+                showLoader: true,
+                data: {
+                    form_key: "<?=/* @noEscape */$block->getFormKey();?>",
+                    clean_type: 'product'
+                },
+                beforeSend: function() {
+                    $('#loader').show();
+                },
+                complete: function(response) {
+                    msg = response.responseJSON.message;
+                    $('#loader').hide();
+                    alert(msg);
+
+                },
+                error: function(xhr, status, errorThrown) {},
+                success: function() {}
+            });
+
+        });
+        //
+        function getDataWithLimit(limit, chunkSize, totalChunks, chunkNumber) {
+            var customurl = "<?=/* @noEscape */$block->getBaseUrl()?>" +
+                'admin/dataimport/Ajax/Addcategories';
+
+            progressCounter(chunkSize, totalChunks, chunkNumber);
+
+            $.ajax({
+                url: customurl,
+                type: 'POST',
+                dataType: 'json',
+                //async: false,
+                data: {
+                    form_key: "<?=/* @noEscape */$block->getFormKey();?>",
+                    start_limit: limit,
+                    total_limit: totalLimit
+
+                },
+                complete: function(response) {
+                    limit = response.responseJSON
+                    // msg = response.responseJSON.messageConnection;
+                    //$('.dataimportdiv').css('display', 'block');
+
+                },
+                error: function(xhr, status, errorThrown) {
+                    console.log('Error happens. Try again.');
+                }
+            });
+        }
+
+        $("#element").accordion();
+    });
+    var options = {
+        type: 'popup',
+        responsive: true,
+        innerScroll: true,
+        title: 'Status Product/Category Import',
+        buttons: [{
+            text: $.mage.__('OK'),
+            class: '',
+            click: function() {
+                this.closeModal();
+            }
+        }]
+    };
+    var popup = modal(options, $('#myModel'));
+    $("#openModel").on("click", function() {
+        $('#myModel').modal('openModal');
+    });
+});
+</script>

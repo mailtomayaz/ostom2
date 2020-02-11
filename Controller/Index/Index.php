@@ -6,8 +6,8 @@
 
 namespace Embraceit\OscommerceToMagento\Controller\Index;
 
-use Magento\Framework\App\Action\Action;
-use Magento\Framework\App\Action\Context;
+use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 
 class Index extends Action

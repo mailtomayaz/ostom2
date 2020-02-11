@@ -5,7 +5,7 @@ use Magento\Framework\Controller\Result\JsonFactory;
 //use Magento\Framework\Controller\Result\JsonFactory;
 use Embraceit\OscommerceToMagento\Model\ExternalDb as ModelExternalDb;
 
-class Addcustomoption extends \Magento\Framework\App\Action\Action
+class Addcustomoption extends  \Magento\Backend\App\Action
 {
     /**
      * @var \Magento\Framework\View\Result\PageFactory
@@ -17,7 +17,7 @@ class Addcustomoption extends \Magento\Framework\App\Action\Action
      * @param \Magento\Framework\App\Action\Context $context
      */
     public function __construct(
-        \Magento\Framework\App\Action\Context $context,
+        \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\View\Result\PageFactory $pageFactory,
         ModelExternalDb $modelExternalDb,
         JsonFactory $jsonFactory
@@ -34,8 +34,11 @@ class Addcustomoption extends \Magento\Framework\App\Action\Action
      */
     public function execute()
     {
-        $catCount=$this->modelExternalDb->getCategoryCount();
-        $categories=$this->modelExternalDb->addCustomOption();
-        return $this->jsonFactory->create()->setData(['importStatus'=>$categories]);
+
+        $startLimit = $this->getRequest()->getParam('start_limit');
+        $totalLimit = $this->getRequest()->getParam('total_limit');
+        $status = $this->modelExternalDb->addCustomOption($startLimit, $totalLimit);
+        //$status=$this->modelExternalDb->addCustomOption();
+        return $this->jsonFactory->create()->setData(['importStatus'=>$status]);
     }
 }

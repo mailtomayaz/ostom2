@@ -23,7 +23,8 @@ class Datacheck extends Template
     const DATABAS_PASSWORD = 'Configure Password';
     const OSCOMMERCE_VERSION = 'Configure OsCommerce Version';
     const CATEGORY_IMAGE_PATH = 'Category Image Path';
-    const PRODUCT_IMAGE_PATH='Product Image Path';
+    const PRODUCT_IMAGE_PATH = 'Product Image Path';
+    const CHUNK_SIZE = 500;
     /**
      * @var modelExternalDb
      */
@@ -168,7 +169,7 @@ class Datacheck extends Template
     }
     public function getProductImagePath()
     {
-       // return $this->modelExternalDb->getImagePathProduct();
+        // return $this->modelExternalDb->getImagePathProduct();
 
         $host = $this->scopeConfig->getValue('firstsection/firstgroup/productImagePath');
         if ($host !== null) {
@@ -245,5 +246,23 @@ class Datacheck extends Template
         } else {
             return self::OSCOMMERCE_VERSION;
         }
+    }
+
+    public function queryDeleteCatData()
+    {
+        return $this->modelExternalDb->deleteCategoryData();
+    }
+    public function querygetAllCategories($startLimit, $totalLimit)
+    {
+        return $this->modelExternalDb->getAllCategories($startLimit, $totalLimit);
+    }
+    public function getChunkSize()
+    {
+        if ($this->modelExternalDb->getChunkSize() !== null) {
+            return $this->modelExternalDb->getChunkSize();
+        } else {
+            return self::CHUNK_SIZE;
+        }
+
     }
 }
