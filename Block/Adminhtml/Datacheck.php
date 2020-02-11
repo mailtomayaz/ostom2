@@ -263,6 +263,5 @@ class Datacheck extends Template
         } else {
             return self::CHUNK_SIZE;
         }
-
     }
 }

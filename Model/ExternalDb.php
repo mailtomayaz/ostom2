@@ -417,7 +417,6 @@ class ExternalDb
             $storeId = $this->getStoreId($description['language_id']);
             $data['data']['store_id'] = $storeId;
             if ($description['language_id'] == 1) {
-
                 $catId = $this->saveCategroyFirstTime($description, $data);
             } else {
                 $urlKey = $this->removeAccent($description["categories_name"]);
@@ -743,7 +742,6 @@ class ExternalDb
                             $this->updateProductData($proDes, $productIdProd);
                         }
                     }
-
                 }
                 //add here
                 //return "Products has been added";
@@ -797,7 +795,7 @@ class ExternalDb
                 'attribute_set_name',
                 "$atrSetName"
             );
-            foreach ($attributeSet as $attr):
+            foreach ($attributeSet as $attr) :
                 $attributeSetId = $attr->getAttributeSetId();
             endforeach;
             return $attributeSetId;
@@ -937,7 +935,12 @@ class ExternalDb
         if ($osVersion == '1.0.0') {
             if (isset($arrCustomOptoin[0]) && $arrCustomOptoin[0] != '') {
                 foreach ($arrCustomOptoin as $key => $attribute) {
-                    return $this->getOptionVersionOne($attribute, $startLimit, $totalLimit,$arrCustomAttributeTitle[$key] );
+                    return $this->getOptionVersionOne(
+                        $attribute,
+                        $startLimit,
+                        $totalLimit,
+                        $arrCustomAttributeTitle[$key]
+                    );
                 }
             }
         }
@@ -968,7 +971,14 @@ class ExternalDb
             $attributeTitle = 'Default';
         }
 
-        if ($results = $this->newDbConnection()->fetchAll($this->queryCustomOptions($attribute, $startLimit, $totalLimit))) {
+        if ($results = $this->newDbConnection()->fetchAll(
+            $this->queryCustomOptions(
+                $attribute,
+                $startLimit,
+                $totalLimit
+            )
+        )
+        ) {
             $nCounter = 0;
             try {
                 foreach ($results as $prod) {
@@ -1331,9 +1341,7 @@ class ExternalDb
             ->from($this->getDbPrefix() . 'products', '*')
             ->order('products_id', 'ASC');
         $limit = " LIMIT $startLimit,$totalLimit";
-        //$select
         return $select . $limit;
-        return $select;
     }
     //get all categories description by ID
     public function getProductDescription($id)
@@ -1434,8 +1442,8 @@ class ExternalDb
             $result = $connection->truncateTable($table);
         }
         $timestamp = date('Y-m-d H:i:s');
-        $insertData = array(
-            array(
+        $insertData = [
+            [
                 'entity_id' => 1,
                 'attribute_set_id' => 0,
                 'parent_id' => 0,
@@ -1445,8 +1453,8 @@ class ExternalDb
                 'position' => 0,
                 'level' => 0,
                 'children_count' => 1,
-            ),
-            array(
+            ],
+            [
                 'entity_id' => 2,
                 'attribute_set_id' => 3,
                 'parent_id' => 1,
@@ -1456,41 +1464,40 @@ class ExternalDb
                 'position' => 1,
                 'level' => 1,
                 'children_count' => 0,
-            ),
-        );
+            ],
+        ];
         try {
             $connection->beginTransaction();
             $connection->insertMultiple('catalog_category_entity', $insertData);
             $connection->commit();
         } catch (\Exception $e) {
-
             $connection->rollBack();
             return $e;
         }
 
-        $insertDataCe = array(
-            array(
+        $insertDataCe = [
+            [
                 'value_id' => 1,
                 'attribute_id' => 69,
                 'store_id' => 0,
                 'entity_id' => 1,
                 'value' => 1,
-            ),
-            array(
+            ],
+            [
                 'value_id' => 2,
                 'attribute_id' => 46,
                 'store_id' => 0,
                 'entity_id' => 2,
                 'value' => 1,
-            ),
-            array(
+            ],
+            [
                 'value_id' => 3,
                 'attribute_id' => 69,
                 'store_id' => 0,
                 'entity_id' => 2,
                 'value' => 1,
-            ),
-        );
+            ],
+        ];
         try {
             $connection->beginTransaction();
             $connection->insertMultiple('catalog_category_entity_int', $insertDataCe);
@@ -1500,22 +1507,22 @@ class ExternalDb
             return $e;
         }
 
-        $insertDataVc = array(
-            array(
+        $insertDataVc = [
+            [
                 'value_id' => 1,
                 'attribute_id' => 45,
                 'store_id' => 0,
                 'entity_id' => 1,
                 'value' => 'Root Catalog',
-            ),
-            array(
+            ],
+            [
                 'value_id' => 2,
                 'attribute_id' => 45,
                 'store_id' => 0,
                 'entity_id' => 2,
                 'value' => 'Default Category',
-            ),
-        );
+            ],
+        ];
         try {
             $connection->beginTransaction();
             $connection->insertMultiple('catalog_category_entity_varchar', $insertDataVc);
@@ -1644,9 +1651,8 @@ class ExternalDb
                 $result = $connection->truncateTable($table);
             }
         } catch (\Exception $e) {
-            return $e;
             $connection->rollBack();
-
+            return $e;
         }
 
         try {
@@ -1668,5 +1674,4 @@ class ExternalDb
             return false;
         }
     }
-
 }

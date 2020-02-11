@@ -5,7 +5,7 @@ use Magento\Framework\Controller\Result\JsonFactory;
 //use Magento\Framework\Controller\Result\JsonFactory;
 use Embraceit\OscommerceToMagento\Model\ExternalDb as ModelExternalDb;
 
-class Addcustomoption extends  \Magento\Backend\App\Action
+class Addcustomoption extends \Magento\Backend\App\Action
 {
     /**
      * @var \Magento\Framework\View\Result\PageFactory

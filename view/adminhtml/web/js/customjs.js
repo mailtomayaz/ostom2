@@ -9,7 +9,8 @@ define([
     'accordion'
 ], function ($, modal) {
     "use strict";
-    function main(config, element) {
+    function main(config, element)
+    {
         var $element = $(element);
         var databaseTestUrl = config.databaseTestUrl;
         var formKey = config.formKey;
@@ -84,7 +85,7 @@ define([
 
                 for (i = 0; i < numberOfChunks; i++) {
                     entityData['url'][i] = customurl;
-                    entityData['recordLimit'][i] = Number(i * entityData['chunkSize'] );
+                    entityData['recordLimit'][i] = Number(i * entityData['chunkSize']);
                     entityData['startAt'][i] = totalLimit;
                 }
                 //recordLimit
@@ -94,7 +95,8 @@ define([
             });
 
             //get information of entity
-            function getAjaxEntityInformation(index, entityData) {
+            function getAjaxEntityInformation(index, entityData)
+            {
                 if (Number(index + 1) == Number(entityData['totalChunks'])) {
                     //remaning items
                     chunkSize = Number(entityData['totalCount']) % Number(entityData['chunkSize']);
@@ -126,9 +128,7 @@ define([
                         }
                         index++;
                         if (entityData['url'][index] != undefined) {
-
                             getAjaxEntityInformation(index, entityData);
-
                         }
                         if (Number(index + 1) == Number(entityData['totalChunks'][index])) {
                             if (Number(realCounter) == chunkSize) {
@@ -147,7 +147,8 @@ define([
             }
 
             //progress counter
-            function progressCounterEntity(chunkSize, totalChunks, index) {
+            function progressCounterEntity(chunkSize, totalChunks, index)
+            {
                 var barValue;
                 var animate = setInterval(function () {
                     var customurl = ajaxBaseUrl + entityData['progresCounterController'];
@@ -222,7 +223,7 @@ define([
 
                 for (i = 0; i < numberOfChunks; i++) {
                     entityData['url'][i] = customurl;
-                    entityData['recordLimit'][i] = Number(i * entityData['chunkSize'] );
+                    entityData['recordLimit'][i] = Number(i * entityData['chunkSize']);
                     entityData['startAt'][i] = totalLimit;
                 }
                 //recordLimit

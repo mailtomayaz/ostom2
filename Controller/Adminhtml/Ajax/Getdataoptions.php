@@ -6,7 +6,7 @@ use Magento\Framework\Controller\Result\JsonFactory;
 use Embraceit\OscommerceToMagento\Model\ExternalDb as ModelExternalDb;
 use Magento\Framework\Session\SessionManagerInterface;
 
-class Getdataoptions extends  \Magento\Backend\App\Action
+class Getdataoptions extends \Magento\Backend\App\Action
 {
     /**
      * @var \Magento\Framework\View\Result\PageFactory

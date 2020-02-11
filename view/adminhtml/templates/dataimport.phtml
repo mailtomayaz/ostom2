@@ -19,7 +19,6 @@
                 <div class="collapsibleContent" data-role="content">
 
                     <table class="bottomBorder">
-                        <!-- <caption>Categories</caption> -->
                         <thead>
                             <tr>
                                 <th scope="col"></th>
@@ -31,7 +30,6 @@
                                 <th scope="col">Clean All Products Data</th>
                             </tr>
                         </thead>
-
                         <tbody>
                             <tr>
                                 <td></td>
@@ -56,8 +54,6 @@
                             </tr>
                         </tbody>
                     </table>
-
-
                 </div>
                 <div class="collapsibleTab" data-role="collapsible">
                     <div data-role="trigger">
@@ -66,7 +62,6 @@
                 </div>
                 <div class="collapsibleContent" data-role="content">
                     <table class="bottomBorder">
-                        <!-- <caption>Test Connection</caption> -->
                         <thead>
                             <tr>
                                 <th scope="col">Host</th>
@@ -93,7 +88,6 @@
                         </tbody>
                     </table>
                 </div>
-
                 <div class="collapsibleTab" data-role="collapsible">
                     <div data-role="trigger">
                         <span>Import Categories</span>
@@ -101,7 +95,6 @@
                 </div>
                 <div class="collapsibleContent" data-role="content">
                     <table class="bottomBorder">
-                        <!-- <caption>Categories</caption> -->
                         <thead>
                             <tr>
                                 <th scope="col">Total</th>
@@ -113,7 +106,6 @@
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
-
                         <tbody>
                             <tr>
                                 <td><?=/* @noEscape */$block->getCategoryInfo();?></td>
@@ -139,16 +131,13 @@
                         </tbody>
                     </table>
                 </div>
-
                 <div class="collapsibleTab" data-role="collapsible">
                     <div data-role="trigger">
                         <span>Import Products</span>
                     </div>
                 </div>
                 <div class="collapsibleContent" data-role="content">
-
                     <table class="bottomBorder">
-                        <!-- <caption>Categories</caption> -->
                         <thead>
                             <tr>
                                 <th scope="col">Total</th>
@@ -160,7 +149,6 @@
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
-
                         <tbody>
                             <tr>
                                 <td><?=/* @noEscape */$block->getProductCount();?></td>
@@ -185,8 +173,6 @@
                             </tr>
                         </tbody>
                     </table>
-
-
                 </div>
                 <div class="collapsibleTab" data-role="collapsible">
                     <div data-role="trigger">
@@ -194,9 +180,7 @@
                     </div>
                 </div>
                 <div class="collapsibleContent" data-role="content">
-
                     <table class="bottomBorder">
-                        <!-- <caption>Categories</caption> -->
                         <thead>
                             <tr>
                                 <th scope="col">Total</th>
@@ -208,7 +192,6 @@
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
-
                         <tbody>
                             <tr>
                                 <td><?=/* @noEscape */$block->getCustomOptionCount();?></td>
@@ -234,28 +217,19 @@
                             </tr>
                         </tbody>
                     </table>
-
-
                 </div>
-
-
-
             </div>
         </div>
     </div>
 </div>
 </div>
-<?php
-$ajaxurl = $block->getAjaxUrl();
-
-?>
 <script type="text/x-magento-init">
     {
             "*": {
                 "Embraceit_OscommerceToMagento/js/customjs": {
-                    "databaseTestUrl": "<?=$block->getBaseUrl()?>admin/dataimport/Ajax/index",
-                    "ajaxBaseUrl": "<?=$block->getBaseUrl()?>admin/dataimport/Ajax/",
-                    "formKey": "<?=$block->getFormKey()?>",
+                    "databaseTestUrl": "<?=/* @noEscape */$block->getBaseUrl()?>admin/dataimport/Ajax/index",
+                    "ajaxBaseUrl": "<?=/* @noEscape */$block->getBaseUrl()?>admin/dataimport/Ajax/",
+                    "formKey": "<?=/* @noEscape */$block->getFormKey()?>",
                     "chunkSize": <?=/* @noEscape */$block->getChunkSize();?>,
                     "totalLimit":<?=/* @noEscape */$block->getChunkSize();?>,
                     "catCount": <?=/* @noEscape */$block->getCategoryInfo();?>,

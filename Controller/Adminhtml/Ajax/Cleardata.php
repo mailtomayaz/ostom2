@@ -6,7 +6,7 @@ use Embraceit\OscommerceToMagento\Model\ExternalDb as ModelExternalDb;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Session\SessionManagerInterface;
 
-class Cleardata extends  \Magento\Backend\App\Action
+class Cleardata extends \Magento\Backend\App\Action
 {
     /**
      * @var \Magento\Framework\View\Result\PageFactory
@@ -43,23 +43,20 @@ class Cleardata extends  \Magento\Backend\App\Action
     {
         $post = $this->getRequest()->getPostValue();
         if (isset($post['clean_type'])) {
-            switch ($post['clean_type']) {
-                case 'category':
-                    $Isdelete = $this->modelExternalDb->deleteCategoryData();
-                    return $this->jsonFactory->create()->setData(
-                        ['message' => $post['clean_type'] . ' ' . self::CLEARED_DATA]
-                    );
-                    break;
-                case 'product':
-                    $Isdelete = $this->modelExternalDb->deleteProductData();
-                    return $this->jsonFactory->create()->setData(
-                        ['message' => $post['clean_type'] . ' ' . self::CLEARED_DATA]
-                    );
-                    break;
-                default:
-                    return $this->jsonFactory->create()->setData(
-                        ['message' => self::DEFAULT_MESSAGE]
-                    );
+            if ($post['clean_type'] == 'category') {
+                $Isdelete = $this->modelExternalDb->deleteCategoryData();
+                return $this->jsonFactory->create()->setData(
+                    ['message' => $post['clean_type'] . ' ' . self::CLEARED_DATA]
+                );
+            } elseif ($post['clean_type'] == 'product') {
+                $Isdelete = $this->modelExternalDb->deleteProductData();
+                return $this->jsonFactory->create()->setData(
+                    ['message' => $post['clean_type'] . ' ' . self::CLEARED_DATA]
+                );
+            } else {
+                return $this->jsonFactory->create()->setData(
+                    ['message' => self::DEFAULT_MESSAGE]
+                );
             }
         }
     }

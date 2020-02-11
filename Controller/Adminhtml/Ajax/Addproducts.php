@@ -5,7 +5,7 @@ use Magento\Framework\Controller\Result\JsonFactory;
 //use Magento\Framework\Controller\Result\JsonFactory;
 use Embraceit\OscommerceToMagento\Model\ExternalDb as ModelExternalDb;
 
-class Addproducts extends  \Magento\Backend\App\Action
+class Addproducts extends \Magento\Backend\App\Action
 {
     /**
      * @var \Magento\Framework\View\Result\PageFactory
@@ -38,7 +38,7 @@ class Addproducts extends  \Magento\Backend\App\Action
         $startLimit = $this->getRequest()->getParam('start_limit');
         $totalLimit = $this->getRequest()->getParam('total_limit');
 
-        $products=$this->modelExternalDb->addProducts( $startLimit,$totalLimit);
+        $products=$this->modelExternalDb->addProducts($startLimit, $totalLimit);
         return $this->jsonFactory->create()->setData(['importStatus'=>$products]);
     }
 }
