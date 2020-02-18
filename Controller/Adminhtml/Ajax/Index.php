@@ -1,9 +1,16 @@
 <?php
+/**
+ * Copyright © Embrace-it, Inc. All rights reserved.
+ */
+
 namespace Embraceit\OscommerceToMagento\Controller\Adminhtml\Ajax;
 
 use Embraceit\OscommerceToMagento\Model\ExternalDb as ModelExternalDb;
-//use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Controller\Result\JsonFactory;
+
+/**
+ * Ajax controller for database connection check
+ */
 
 class Index extends \Magento\Backend\App\Action
 {

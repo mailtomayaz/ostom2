@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright © Embraceit, Inc. All rights reserved.
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
@@ -16,16 +15,16 @@
         <resource>Embraceit_OscommerceToMagento::parent</resource>
         <group id="firstgroup" showInWebsite="1"  showInStore="1"  showInDefault="1">
             <label>Import data</label>
-            <field id="DbHostName" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="100" type="text">
+            <field id="dbHostName" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="100" type="text">
             <label>Database Hostname</label>
             </field>
-            <field id="DbName" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="101" type="text">
+            <field id="osDbName" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="101" type="text">
             <label>Database Name</label>
             </field>
-            <field id="DbUserName" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="102" type="text">
+            <field id="dbUserName" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="102" type="text">
             <label>Database Username</label>
             </field>
-            <field id="DbPassword" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="103" type="text">
+            <field id="dbPassword" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="103" type="text">
             <label>Database Password</label>
             </field>
                <field id="databasePrefex" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="103" type="text">
@@ -43,7 +42,7 @@
             <field id="customAttributeTitle" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="103" type="text">
             <label>custom attribute title comma (,) seperated</label>
             </field>
-            <field id="OscVersion" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="104" type="select">
+            <field id="oscVersion" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="104" type="select">
             <label>Oscommerece Version</label>
             <source_model>Embraceit\OscommerceToMagento\Model\AdminArray</source_model>
             </field>

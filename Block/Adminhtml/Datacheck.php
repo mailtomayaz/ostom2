@@ -1,7 +1,6 @@
 <?php
 /**
  * Copyright © Embrace-it, Inc. All rights reserved.
- * See COPYING.txt for license details.
  */
 
 namespace Embraceit\OscommerceToMagento\Block\Adminhtml;
@@ -17,6 +16,7 @@ use Magento\Framework\Session\SessionManagerInterface;
  */
 class Datacheck extends Template
 {
+
     const HOST_NAME = 'Configure Host Name';
     const DATABASE_NAME = 'Configure Database';
     const USER_NAME = 'Configure User Name';
@@ -30,7 +30,7 @@ class Datacheck extends Template
      */
     protected $modelExternalDb;
     /**
-     * @var coreSession
+     * @var SessionManagerInterface
      */
     protected $coreSession;
 
@@ -38,10 +38,13 @@ class Datacheck extends Template
      * @var formKey
      */
     protected $formKey;
+
+    /**
+     * @var ScopeConfigInterface
+     */
     protected $scopeConfig;
     /**
      * @param \Magento\Backend\Block\Template\Context           $context
-     * @param Embraceit\OscommerceToMagento\Model\ExternalDb    $modelExternalDb
      * @param Magento\Framework\Session\SessionManagerInterface $coreSession
      * @param Magento\Framework\Data\Form\FormKey               $formKey
      * @param array                                             $data
@@ -110,7 +113,6 @@ class Datacheck extends Template
         return $this->modelExternalDb->getAtributeSet($id);
     }
     /**
-     * Undocumented function
      *
      * @param string $option
      * @return array
@@ -119,58 +121,95 @@ class Datacheck extends Template
     {
         return $this->modelExternalDb->queryCustomOptions($option);
     }
-
+    /**
+     * language by id
+     * @param int $id
+     * @return array
+     */
     public function getLanguageByID($id)
     {
         return $this->modelExternalDb->getLanguageById($id);
     }
+    /**
+     * Get import progress
+     * @return int
+     */
     public function getProgressAjax()
     {
         return $this->modelExternalDb->getValue();
     }
+    /**
+     * unset value of progress
+     *
+     */
     public function getUnsetProgressBar()
     {
         return $this->modelExternalDb->setValue(0);
     }
-
+    /**
+     *  Query custom product attributes
+     * @return string
+     */
     public function getProductAtr()
     {
         return $this->modelExternalDb->queryCustomProductAttributes();
     }
+    /**
+     *  Query custom product attributes by id
+     * @param int $id
+     * @return string
+     */
+
     public function getAtributeByProductId($id)
     {
         return $this->modelExternalDb->queryGetCustomProductAttributesById($id);
     }
+    /**
+     *  Query custom option by attribute id
+     * @param int $id
+     * @return string
+     */
     public function getOptionDetial($id)
     {
         return $this->modelExternalDb->queryGetOptionDetial($id);
     }
+    /**
+     *  Query custom option by attribute id
+     * @param int $optionId
+     * @param int $productId
+     * @return string
+     */
     public function getOptionData($optionId, $productId)
     {
         return $this->modelExternalDb->queryGetOptionData($optionId, $productId);
     }
     /**
-     * get form key
-     *
+     * Form key
      * @return string
      */
     public function getFormKey()
     {
         return $this->formKey->getFormKey();
     }
-
+    /**
+     *  Query count custom options
+     * @return int
+     */
     public function getCustomOptionCount()
     {
         $nCount = $this->modelExternalDb->getTotalCustomOptionCount();
         if ($nCount == null) {
             $nCount = 0;
         }
+
         return $nCount;
     }
+    /**
+     *  config product image path
+     * @return string
+     */
     public function getProductImagePath()
     {
-        // return $this->modelExternalDb->getImagePathProduct();
-
         $host = $this->scopeConfig->getValue('firstsection/firstgroup/productImagePath');
         if ($host !== null) {
             return $host;
@@ -178,9 +217,12 @@ class Datacheck extends Template
             return self::PRODUCT_IMAGE_PATH;
         }
     }
+    /**
+     *  Config category image path
+     * @return string
+     */
     public function getCategoryImagePath()
     {
-        //return $this->modelExternalDb->getImagePathCategory();
         $host = $this->scopeConfig->getValue('firstsection/firstgroup/categoryImagePath');
         if ($host !== null) {
             return $host;
@@ -188,74 +230,112 @@ class Datacheck extends Template
             return self::CATEGORY_IMAGE_PATH;
         }
     }
-    // public function getAttributesetLang()
-    // {
-    //     return $this->modelExternalDb->getAttributeTranslationCount();
-    // }
+    /**
+     *  attribute sets
+     * @return array
+     */
     public function getAttributeSets()
     {
         return $this->modelExternalDb->getAllAtrributeSet();
     }
-    public function getAtributeByName()
+    /**
+     *  retrive attribute
+     * @param string $name
+     * @return array|string
+     */
+    public function getAtributeByName($name)
     {
-        return $this->modelExternalDb->getAttributeByName();
+        return $this->modelExternalDb->getAttributeByName($name);
     }
-    //public function
+    /**
+     *  config database host name
+     * @return string
+     */
     public function getDatabaseHostName()
     {
-        $host = $this->scopeConfig->getValue('firstsection/firstgroup/DbHostName');
+        $host = $this->scopeConfig->getValue('firstsection/firstgroup/dbHostName');
         if ($host !== null) {
             return $host;
         } else {
             return self::HOST_NAME;
         }
     }
+    /**
+     *  config database name
+     * @return string
+     */
     public function getDatabaseName()
     {
-        $host = $this->scopeConfig->getValue('firstsection/firstgroup/DbName');
+        $host = $this->scopeConfig->getValue('firstsection/firstgroup/osDbName');
         if ($host !== null) {
             return $host;
         } else {
             return self::DATABASE_NAME;
         }
     }
-
+    /**
+     *  config database user name
+     * @return string
+     */
     public function getDatabaseUser()
     {
-        $host = $this->scopeConfig->getValue('firstsection/firstgroup/DbUserName');
+        $host = $this->scopeConfig->getValue('firstsection/firstgroup/dbUserName');
         if ($host !== null) {
             return $host;
         } else {
             return self::USER_NAME;
         }
     }
+    /**
+     *  config database password
+     * @return string
+     */
     public function getDatabasePassword()
     {
-        $host = $this->scopeConfig->getValue('firstsection/firstgroup/DbPassword');
+        $host = $this->scopeConfig->getValue('firstsection/firstgroup/dbPassword');
         if ($host !== null) {
             return $host;
         } else {
             return self::DATABAS_PASSWORD;
         }
     }
+    /**
+     *  config oscommerce version number
+     * @return string
+     */
     public function getOsCommerceVersion()
     {
-        $host = $this->scopeConfig->getValue('firstsection/firstgroup/OscVersion');
+        $host = $this->scopeConfig->getValue('firstsection/firstgroup/oscVersion');
         if ($host !== null) {
             return $host;
         } else {
             return self::OSCOMMERCE_VERSION;
         }
     }
-
+    /**
+     *  delete all categories
+     * @return string
+     * @throws \Magento\Exception
+     */
     public function queryDeleteCatData()
     {
         return $this->modelExternalDb->deleteCategoryData();
     }
+    /**
+     *  Query OS categories by limit
+     * @param int $startLimit
+     * @param int $totalLimit
+     * @return string
+     * @throws \Magento\Exception
+     */
     public function querygetAllCategories($startLimit, $totalLimit)
     {
         return $this->modelExternalDb->getAllCategories($startLimit, $totalLimit);
     }
+    /**
+     *  config chunksize
+     * @return int
+     */
     public function getChunkSize()
     {
         if ($this->modelExternalDb->getChunkSize() !== null) {

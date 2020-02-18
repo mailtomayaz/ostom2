@@ -1,4 +1,7 @@
 <?php
+/**
+ * Copyright © Embrace-it, Inc. All rights reserved.
+ */
 namespace Embraceit\OscommerceToMagento\Model;
 
 use Magento\CatalogInventory\Api\StockRegistryInterface;
@@ -33,49 +36,186 @@ use Magento\Store\Model\Store as storeModel;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Main class to import oscommerece data
+ *
+ */
 class ExternalDb
 {
+    /**
+     * @var ConnectionFactory
+     */
     protected $connectionFactory;
+    /**
+     * @var ScopeConfigInterface
+     */
     protected $scopeConfig;
+    /**
+     * @var CategoryFactory
+     */
     protected $categoryFactory;
+    /**
+     * @var CategoryRepositoryInterface
+     */
     protected $repository;
+    /**
+     * @var Category
+     */
     protected $modelCategory;
+    /**
+     * @var eavCollectionFactory
+     */
     protected $eavCollectionFactory;
+    /**
+     * @var productModel
+     */
     protected $productModel;
+    /**
+     * @var State
+     */
     protected $state;
+    /**
+     * @var productCollection
+     */
     protected $productCollection;
+    /**
+     * @var ProductInterfaceFactory
+     */
     protected $productFactory;
+    /**
+     * @var productCollectionFactory
+     */
     protected $productCollectionFactory;
+    /**
+     * @var ProductRepositoryInterface
+     */
     protected $productRepository;
+    /**
+     * @var StockRegistryInterface
+     */
     protected $stockRegistry;
+    /**
+     * @var Option
+     */
     protected $option;
+    /**
+     * @var modelProductRepostry
+     */
     protected $modelProductRepostry;
+    /**
+     * @var OptionFactory
+     */
     protected $productOptionFactory;
+    /**
+     * @var StoreManagerInterface
+     */
     protected $storeManagerInterface;
+    /**
+     * @var storeModel
+     */
     protected $storeModel;
+    /**
+     * @var SessionManagerInterface
+     */
     protected $coreSession;
+    /**
+     * @var AttributeSetFactory
+     */
     protected $attributeSetFactory;
+    /**
+     * @var EavSetupFactory
+     */
     protected $eavSetupFactory;
+    /**
+     * @var TypeFactory
+     */
     protected $eavTypeFactory;
+    /**
+     * @var AttributeSetManagement
+     */
     protected $attributeSetManagement;
+    /**
+     * @var AttributeManagement
+     */
     protected $attributeManagement;
+    /**
+     * @var File
+     */
     protected $file;
+    /**
+     * @var Serialize
+     */
     protected $serialize;
+    /**
+     * @var $this->scopeConfig->getValue('firstsection/firstgroup/dbHostName')
+     */
     protected $hostName;
+    /**
+     * @var $this->scopeConfig->getValue('firstsection/firstgroup/osDbName')
+     */
     protected $databaseName;
+    /**
+     * @var  $this->scopeConfig->getValue('firstsection/firstgroup/dbUserName');
+     */
     protected $databaseUser;
+    /**
+     * @var  $this->scopeConfig->getValue('firstsection/firstgroup/dbPassword');
+     */
     protected $databasPassword;
+    /**
+     * @var  $this->scopeConfig->getValue('firstsection/firstgroup/oscVersion');
+     */
     protected $osCommerceVersion;
+    /**
+     * @var ModuleDataSetupInterface
+     */
     protected $setup;
+    /**
+     * @var LoggerInterface
+     */
     protected $logger;
+    /**
+     * @var CollectionFactory
+     */
     protected $categoryCollection;
-
     /**
      *
-     * @var  Magento\Catalog\Setup\CategorySetupFactory
+     * @var CategorySetupFactory
      */
     protected $categorySetupFactory;
-
+    /**
+     * @param ConnectionFactory $connectionFactory
+     * @param ScopeConfigInterface $scopeConfig
+     * @param CategoryFactory $categoryFactory
+     * @param CategoryRepositoryInterface $repository
+     * @param Category $modelCategory
+     * @param eavCollectionFactory $eavCollectionFactory
+     * @param productModel $productModel
+     * @param State $state
+     * @param productCollection $productCollection
+     * @param productCollectionFactory $productCollectionFactory
+     * @param ProductInterfaceFactory $productFactory
+     * @param ProductRepositoryInterface $productRepository
+     * @param StockRegistryInterface $stockRegistry
+     * @param Option $option
+     * @param modelProductRepostry $modelProductRepostry
+     * @param OptionFactory $productOptionFactory
+     * @param StoreManagerInterface $storeManagerInterface
+     * @param storeModel $storeModel
+     * @param SessionManagerInterface $coreSession
+     * @param AttributeSetFactory $attributeSetFactory
+     * @param CategorySetupFactory $categorySetupFactory
+     * @param EavSetupFactory $eavSetupFactory
+     * @param TypeFactory $eavTypeFactory
+     * @param AttributeSetManagement $attributeSetManagement
+     * @param AttributeManagement $attributeManagement
+     * @param File $file
+     * @param Serialize $serialize
+     * @param ModuleDataSetupInterface $setup
+     * @param LoggerInterface $logger
+     * @param CollectionFactory $categoryCollection
+     *
+     */
     public function __construct(
         ConnectionFactory $connectionFactory,
         ScopeConfigInterface $scopeConfig,
@@ -135,56 +275,80 @@ class ExternalDb
         $this->attributeManagement = $attributeManagement;
         $this->file = $file;
         $this->serialize = $serialize;
-        $this->hostName = $this->scopeConfig->getValue('firstsection/firstgroup/DbHostName');
-        $this->databaseUser = $this->scopeConfig->getValue('firstsection/firstgroup/DbUserName');
-        $this->databasPassword = $this->scopeConfig->getValue('firstsection/firstgroup/DbPassword');
-        $this->osCommerceVersion = $this->scopeConfig->getValue('firstsection/firstgroup/OscVersion');
-        $this->databaseName = $this->scopeConfig->getValue('firstsection/firstgroup/DbName');
+        $this->hostName = $this->scopeConfig->getValue('firstsection/firstgroup/dbHostName');
+        $this->databaseUser = $this->scopeConfig->getValue('firstsection/firstgroup/dbUserName');
+        $this->databasPassword = $this->scopeConfig->getValue('firstsection/firstgroup/dbPassword');
+        $this->osCommerceVersion = $this->scopeConfig->getValue('firstsection/firstgroup/oscVersion');
+        $this->databaseName = $this->scopeConfig->getValue('firstsection/firstgroup/osDbName');
         $this->setup = $setup;
         $this->logger = $logger;
         $this->collectionFactory = $categoryCollection;
         $this->initDb();
     }
+
+    /**
+     * Initiate oscommerce database connection
+     *
+     * @param  string hostName
+     * @param  string databaseName
+     * @param string databaseUser
+     * @param string databasPassword
+     * @return boolean
+     */
     public function initDb()
     {
+
         if ($this->hostName !== null) {
-            $db = $this->connectionFactory->create([
-                'host' => $this->hostName,
-                'dbname' => $this->databaseName,
-                'username' => $this->databaseUser,
-                'password' => $this->databasPassword,
-                'active' => '1',
-            ]);
+            $db = $this->connectionFactory->create(
+                [
+                    'host' => $this->hostName,
+                    'dbname' => $this->databaseName,
+                    'username' => $this->databaseUser,
+                    'password' => $this->databasPassword,
+                    'active' => '1',
+                ]
+            );
             $tableToTest = $this->getDbPrefix() . 'categories';
             try {
-                /* Some logic that could throw an Exception */
                 $select = $db->select()
                     ->from($tableToTest, 'categories_id');
                 if ($results = $db->fetchAll($select)) {
                     return true;
                 }
             } catch (\Exception $e) {
-                //$this->logger->critical($e->getMessage());
                 return false;
             }
         }
     }
+
+    /**
+     * Setup oscommerce database connection
+     *
+     * @param  string hostName
+     * @param string databaseName
+     * @param string databaseUser
+     * @param string databasPassword
+     * @return connectionFactory database object
+     */
+
     public function newDbConnection()
     {
 
         if ($this->hostName !== null) {
-            $db = $this->connectionFactory->create([
-                'host' => $this->hostName,
-                'dbname' => $this->databaseName,
-                'username' => $this->databaseUser,
-                'password' => $this->databasPassword,
-                'active' => '1',
-            ]);
+            $db = $this->connectionFactory->create(
+                [
+                    'host' => $this->hostName,
+                    'dbname' => $this->databaseName,
+                    'username' => $this->databaseUser,
+                    'password' => $this->databasPassword,
+                    'active' => '1',
+                ]
+            );
             return $db;
         }
     }
 /**
- * Undocumented function
+ * Get total number of category
  *
  * @return int
  */
@@ -199,73 +363,129 @@ class ExternalDb
         }
         return $count;
     }
+    /**
+     * set session value for progress counter category
+     * @param int $count
+     */
     public function setValue($count)
     {
         $this->coreSession->start();
         $this->coreSession->setProgressbar($count);
         $this->coreSession->writeClose(); //IMPORTANT!
     }
+    /**
+     * Get session value for progress counter category
+     * @return int
+     */
     public function getValue()
     {
         $this->coreSession->start();
         return $this->coreSession->getProgressbar();
     }
-
+    /**
+     * Clean session variable value for progress counter category
+     * @return void
+     */
     public function unSetValue()
     {
         $this->coreSession->start();
         return $this->coreSession->unsProgressbar();
     }
-
+    /**
+     * set session value for progress counter product
+     * @param int $count
+     */
     public function setProductprogress($count)
     {
         $this->coreSession->start();
         $this->coreSession->setProgressbarproduct($count);
         $this->coreSession->writeClose();
     }
+    /**
+     * Get session value for progress counter product
+     * @return int
+     */
     public function getProductprogress()
     {
         $this->coreSession->start();
         return $this->coreSession->getProgressbarproduct();
     }
-
+    /**
+     * Clean session variable value for progress counter product
+     * @return void
+     */
     public function unSetProductprogress()
     {
         $this->coreSession->start();
         return $this->coreSession->unsProgressbarproduct();
     }
-
+    /**
+     * set session value for progress counter custom options
+     * @param int $count
+     */
     public function setOptionValue($count)
     {
         $this->coreSession->start();
         $this->coreSession->setProgressbaroption($count);
         $this->coreSession->writeClose();
     }
+    /**
+     * Get session value for progress counter product custom options
+     * @return int
+     */
     public function getOptionValue()
     {
         $this->coreSession->start();
         return $this->coreSession->getProgressbaroption();
     }
 
+    /**
+     * Clean session variable value for progress counter  product custom options
+     *
+     * @return void
+     */
     public function unSetProgressbaroption()
     {
         $this->coreSession->start();
         return $this->coreSession->unsProgressbaroption();
     }
 
+    /**
+     * Get Oscommerce database prefix from configurations
+     *
+     * @return string $dbPrefix
+     */
     public function getDbPrefix()
     {
         $dbPrefix = $this->scopeConfig->getValue('firstsection/firstgroup/databasePrefex');
         return $dbPrefix;
     }
+    /**
+     * Get Oscommerce category image path from configurations
+     *
+     * @return string $categoryImagePath
+     */
     public function getCategoryImagePath()
     {
-        return $this->scopeConfig->getValue('firstsection/firstgroup/categoryImagePath');
+        $categoryImagePath = $this->scopeConfig->getValue('firstsection/firstgroup/categoryImagePath');
+        return $categoryImagePath;
     }
+    /**
+     * Get chunk size from configurations to process
+     *
+     * @return int $dataChunkSize
+     */
     public function getChunkSize()
     {
-        return $this->scopeConfig->getValue('firstsection/firstgroup/dataChunkSize');
+        $dataChunkSize = $this->scopeConfig->getValue('firstsection/firstgroup/dataChunkSize');
+        return $dataChunkSize;
     }
+    /**
+     * Set image with category
+     *
+     * @param string $categoryImage
+     * @return string $imageName
+     */
     public function setImageCategory($categoryImage)
     {
         $imageName = '';
@@ -279,11 +499,13 @@ class ExternalDb
         } else {
             $imgPath = $this->getCategoryImagePath();
         }
+
         $path = BP . '/pub/media/catalog/category';
         if (!$this->file->isExists($path)) {
             $path = BP . '/pub/media/catalog/category';
             $this->file->createDirectory($path);
         }
+
         $imageName = $categoryImage;
         $newPath = '';
         $imagePath = $imgPath . $categoryImage;
@@ -293,11 +515,22 @@ class ExternalDb
         $copied = $this->file->copy($imagePath, BP . $categoryImage);
         return $imageName;
     }
+    /**
+     * Get Oscommerce product image path from configurations
+     *
+     * @return string $imgPath
+     */
     public function getProductImagePath()
     {
         $imgPath = $this->scopeConfig->getValue('firstsection/firstgroup/productImagePath');
         return $imgPath;
     }
+    /**
+     * Set image with product
+     *
+     * @param string $productImage
+     * @return string $productImage
+     */
     public function setImageProduct($productImage)
     {
         $imageName = '';
@@ -312,11 +545,13 @@ class ExternalDb
         } else {
             $imgPath = $this->getProductImagePath();
         }
+
         $path = BP . '/pub/media/productimages/';
         if (!$this->file->isExists($path)) {
             $path = BP . '/pub/media/productimages/';
             $this->file->createDirectory($path);
         }
+
         $imageName = $productImage;
         $newPath = '';
         $imagePath = $imgPath . $productImage;
@@ -327,6 +562,10 @@ class ExternalDb
         return $productImage;
     }
 
+    /**
+     * Create store view from Oscommerce languges
+     *
+     */
     public function createStoreViewLng()
     {
         if ($resultsLanguge = $this->newDbConnection()->fetchAll($this->getAllLanguages())) {
@@ -340,12 +579,20 @@ class ExternalDb
                         $addStore = false;
                     }
                 }
+
                 if ($addStore) {
                     $this->createStoreView('', 1, $lang['name'], $lang['code'], 1, 1, 3);
                 }
             }
         }
     }
+    /**
+     * Add new category Oscommerce database
+     *
+     * @param array $description
+     * @param array $data
+     * @return int $catId
+     */
     public function saveCategroyFirstTime($description, $data)
     {
         $data['data']['name'] = $description["categories_name"];
@@ -378,8 +625,6 @@ class ExternalDb
             $result = $this->repository->save($categoryData);
             $catId = $result->getId();
         } else {
-            //echo "dont save";
-
             $catId = $checkCat->getFirstItem()->getEntityId();
         }
         //set default values
@@ -390,6 +635,12 @@ class ExternalDb
 
         return $catId;
     }
+    /**
+     * Update category with new translation/view
+     *
+     * @param array $description
+     * @param array $arrData
+     */
     public function updateCategory($description, $arrData)
     {
         $categoryTra = $this->modelCategory->load($arrData['data']['category_id'], $arrData['data']['store_id']);
@@ -404,6 +655,12 @@ class ExternalDb
         $categoryTra->setCategoryId($description["categories_id"]);
         $categoryTra->save();
     }
+    /**
+     * Get category data from oscommerce database and save or update it
+     *
+     * @param array $arrDescription
+     * @param array $data
+     */
     public function getCategoryDiscriptionData($arrDescription, $data)
     {
         $catId = '';
@@ -411,6 +668,7 @@ class ExternalDb
             if ($data['data']['parent_id'] == '' || $description["categories_name"] == '') {
                 continue;
             }
+
             // create store view if not exist
             $this->createStoreViewLng();
             //get store ID/languge id
@@ -430,6 +688,7 @@ class ExternalDb
                 if ($parentCatId) {
                     continue;
                 }
+
                 $data['data']['category_id'] = $catId;
                 $data['data']['url_key'] = $urlKey;
                 $this->updateCategory($description, $data);
@@ -437,16 +696,17 @@ class ExternalDb
         }
     }
     /**
-     * Undocumented function
+     * Add category with chunk limit
      *
-     * @return void
+     * @param int $startLimit
+     * @param int $totalLimit
+     * @return boolean
+     * @throws Exception
      */
     public function addCategory($startLimit, $totalLimit)
     {
         //add languges or store view before adding categories
         if ($results = $this->newDbConnection()->fetchAll($this->getAllCategories($startLimit, $totalLimit))) {
-            $nCount = 0;
-            $catId = '';
             $nCounter = 0;
             $flag = true;
             foreach ($results as $category) {
@@ -454,11 +714,6 @@ class ExternalDb
                     $this->unSetValue();
                     $nCounter++;
                     $this->setValue($nCounter);
-
-                    // if ($nCounter > 500) {
-                    //     die('stop and  check');
-                    // }
-                    //$nCounter = 0;
                     //get category information
                     $categoryParent = $category['parent_id'];
                     $categoryStatus = $category['categories_status'];
@@ -491,7 +746,6 @@ class ExternalDb
                             "position" => $categorySortOrder,
                             "include_in_menu" => $categoryInMenu,
                             'image' => $categoryImage,
-                            //'store_id' => $storeId
                         ],
                     ];
                     if ($catResults = $this->newDbConnection()->fetchAll($this->getCategoryDescription($categoryId))) {
@@ -499,16 +753,21 @@ class ExternalDb
                         $this->getCategoryDiscriptionData($catResults, $data);
                     }
                 } catch (\Exception $e) {
-                    // $this->logger->critical($e->getMessage());
                     $flag = false;
                     return $e->getMessage();
                 }
             }
+
             return $flag;
         }
     }
-    //getAllCategories($startLimit, $totalLimit)
-    //get all categoryies query
+    /**
+     * Query get all categories of oscommerce with limit
+     *
+     * @param int $startLimit
+     * @param int $totalLimit
+     * @return string  $select
+     */
     public function getAllCategories($startLimit, $totalLimit)
     {
         $select = $this->newDbConnection()
@@ -517,11 +776,14 @@ class ExternalDb
             ->order('categories_id', 'ASC');
         //->limit($startLimit, $totalLimit);
         $limit = " LIMIT $startLimit,$totalLimit";
-        //$select
         return $select . $limit;
     }
 
-    //get all languges query
+    /**
+     * Query get all oscommcrece languages
+     *
+     * @return string  $select
+     */
     public function getAllLanguages()
     {
         $select = $this->newDbConnection()
@@ -531,8 +793,12 @@ class ExternalDb
         return $select;
     }
 
-    //get langure by id
-    //get all languges query
+    /**
+     * Query get oscommcrece language by ID
+     *
+     * @param int $id
+     * @return string  $select
+     */
     public function getLanguageById($id)
     {
         $select = $this->newDbConnection()
@@ -542,7 +808,12 @@ class ExternalDb
         return $select;
     }
 
-    //get all categories description by ID
+    /**
+     * Query get oscommcrece category detials by ID
+     *
+     * @param int $id
+     * @return string  $select
+     */
     public function getCategoryDescription($id)
     {
         $select = $this->newDbConnection()
@@ -553,7 +824,11 @@ class ExternalDb
         return $select;
     }
 
-    //get total products
+    /**
+     * Query get oscommcrece product count
+     *
+     * @return int  $count
+     */
     public function getTotalProductsCount()
     {
         $count = 0;
@@ -563,9 +838,14 @@ class ExternalDb
                 return count($results);
             }
         }
+
         return $count;
     }
-    //get total custom option count
+    /**
+     * Query get oscommcrece custom option count
+     *
+     * @return int  $count
+     */
     public function getTotalCustomOptionCount()
     {
         $count = 0;
@@ -586,9 +866,14 @@ class ExternalDb
                 return 0;
             }
         }
+
         return $count;
     }
-//attribute set add
+
+    /**
+     * Add attribute set if not exist
+     *
+     */
 
     public function addAttributeSet()
     {
@@ -603,6 +888,7 @@ class ExternalDb
                 if (isset($arrAtribute['attribute_set_name'])) {
                     continue;
                 }
+
                 $entityTypeCode = 'catalog_product';
                 $entityType = $this->eavTypeFactory->create()->loadByCode($entityTypeCode);
                 $defaultSetId = $entityType->getDefaultAttributeSetId();
@@ -618,7 +904,13 @@ class ExternalDb
             }
         }
     }
-//get attributeby name
+    /**
+     * Get  attribute by name
+     *
+     * @param string $name
+     * @return array|string
+     */
+
     public function getAttributeByName($name)
     {
         $attributeCollection = $this->eavCollectionFactory->create();
@@ -628,22 +920,25 @@ class ExternalDb
                 return $attSet->getData();
             }
         }
+
         return 'check';
     }
-    //add products
+    /**
+     * Add products
+     *
+     * @param int $startLimit
+     * @param int $totalLimit
+     * @return boolean  $flag
+     */
     public function addProducts($startLimit, $totalLimit)
     {
         $this->addAttributeSet();
 
         if ($results = $this->newDbConnection()->fetchAll($this->getAllProductDetials($startLimit, $totalLimit))) {
             $ncounter = 0;
-            $nCounter = 0;
-            $catId = '';
             $productId = '';
             $productIdProd = '';
-            $prodSku = '';
             $pImage = '';
-            $sku = '';
             $flag = true;
             try {
                 foreach ($results as $product) {
@@ -651,9 +946,6 @@ class ExternalDb
                     $this->unSetProductprogress();
                     $ncounter++;
                     $this->setProductprogress($ncounter);
-                    // if ($ncounter > 50) {
-                    //     die('stop annd check');
-                    // }
                     //skip and check if this product exist in database
 
                     $checkSku = 'sku' . '-' . $product['products_id'];
@@ -668,6 +960,7 @@ class ExternalDb
                         //product with the same sku already exist skip to next product;
                         continue;
                     }
+
                     //attach attribute set
                     $atrType = $product['product_type'];
                     $attributeSetId = $this->addAttributeSetProduct($atrType);
@@ -722,8 +1015,6 @@ class ExternalDb
                         if ($proDes['products_name'] == '') {
                             continue;
                         }
-
-                        $sku = '';
                         if ($proDes['language_id'] == 1) {
                             $productIdProd = $this->addNewProductData(
                                 $proDes,
@@ -732,6 +1023,7 @@ class ExternalDb
                                 $pImage
                             );
                         }
+
                         //skip product
                         if ($proDes['language_id'] != 1 && $productIdProd == '') {
                             //there is no product id
@@ -743,18 +1035,21 @@ class ExternalDb
                         }
                     }
                 }
-                //add here
-                //return "Products has been added";
+
                 return $flag;
             } catch (\Exception $e) {
-                //$this->logger->critical($e->getMessage());
                 $flag = false;
                 return $e->getMessage();
             }
+
             return $flag;
         }
     }
-
+    /**
+     * Add products to categories
+     *
+     * @param int $productId
+     */
     public function addProductToCategory($productId)
     {
         $arrCatIds = [];
@@ -769,10 +1064,16 @@ class ExternalDb
                 $arrCatIds[] = $catId;
             }
         }
+
         $this->productModel->setCategoryIds($arrCatIds);
     }
 
-    //add attribute set
+    /**
+     * Add attribute set name with product
+     *
+     * @param int $atrType
+     * @return int $attributeSetId
+     */
     public function addAttributeSetProduct($atrType)
     {
         $resultsAtr = $this->newDbConnection()->fetchAll($this->getAtributeSet($atrType));
@@ -783,25 +1084,31 @@ class ExternalDb
                 //default attribute set
                 $attributeSetId = 4;
             }
+
             return $attributeSetId;
         } else {
             $resultsAtr = $this->newDbConnection()->fetchAll($this->getAtributeSet($atrType));
             foreach ($resultsAtr as $artType) {
                 $atrSetName = $artType['name'];
             }
+
             $attributeSet = $this->eavCollectionFactory->create()->addFieldToSelect(
                 '*'
             )->addFieldToFilter(
                 'attribute_set_name',
                 "$atrSetName"
             );
-            foreach ($attributeSet as $attr) :
+            foreach ($attributeSet as $attr):
                 $attributeSetId = $attr->getAttributeSetId();
             endforeach;
             return $attributeSetId;
         }
     }
-    //add tax class
+    /**
+     * Add tax class to  product
+     *
+     * @param int $classId
+     */
     public function addTaxClass($classId)
     {
         if ($classId == 0) {
@@ -811,7 +1118,12 @@ class ExternalDb
         }
     }
 
-//update product data
+    /**
+     * Update product data/translation
+     *
+     * @param array $proDes
+     * @param int $productIdProd
+     */
 
     public function updateProductData($proDes, $productIdProd)
     {
@@ -825,7 +1137,15 @@ class ExternalDb
         $productData->setDescription($proDes['products_description']);
         $productData->save();
     }
-
+    /**
+     * Add new product data/translation
+     *
+     * @param array $proDes
+     * @param int $productId
+     * @param arry $productInfo
+     * @param string $pImage
+     * @return int $productIdProd
+     */
     public function addNewProductData($proDes, $productId, $productInfo, $pImage)
     {
         $storeId = $this->getStoreId($proDes['language_id']);
@@ -854,16 +1174,12 @@ class ExternalDb
         };
 
         $collectionProduct = $this->productCollectionFactory->create()
-        //->getCollection()
             ->addAttributeToSelect(['entity_id'])
             ->addAttributeToFilter('url_key', ['like' => "%" . $urlKey . '%']);
-        //$query = $collectionProduct->getSelect()->__toString();
         if ($collectionProduct->getFirstItem()->getId()) {
             // url key of the product
             $urlKey = strtolower($urlKey . '-' . $productId);
             $productInfo->setUrlKey($urlKey);
-            //$this->logger->info($urlKey, $proDes);
-            //$this->logger->info($urlKey . '--in first condiation--');
         };
 
         $collectionProductCheck = $this->productCollectionFactory->create();
@@ -884,54 +1200,82 @@ class ExternalDb
             $productInfo
                 ->addImageToMediaGallery(BP . $productImage, ['image', 'small_image', 'thumbnail'], false, false);
         }
+
         $isProduct = $this->productRepository->save($productInfo);
         $productIdProd = $isProduct->getId();
         $prodSku = $isProduct->getSku();
         return $productIdProd;
     }
-//get storeID
+    /**
+     * Get store by id
+     *
+     * @param int $id
+     * @return int $storeId
+     */
 
     public function getStoreId($id)
     {
         $storeId = '';
         $resultLang = $this->newDbConnection()->fetchAll($this->getLanguageById($id));
-        //end language check
         $localStores = $this->storeManagerInterface->getStores();
         foreach ($localStores as $mStoreLang) {
             if (strtolower($resultLang[0]['name']) == strtolower($mStoreLang['name'])) {
-                //$addStore = false;
-                //echo "in matching";
                 $storeId = $mStoreLang['store_id'];
             }
         }
         return $storeId;
     }
+    /**
+     * Get custom attribute names from configuration
+     *
+     * @return array $customAtributes
+     */
     public function getCustomAttributeData()
     {
-        return $this->scopeConfig->getValue('firstsection/firstgroup/customAttribute');
+        $customAtributes = $this->scopeConfig->getValue('firstsection/firstgroup/customAttribute');
+        return $customAtributes;
     }
+    /**
+     * Get custom attribute title from configuration
+     *
+     * @return array $customAtributeTitle
+     */
+
     public function getCustomAttributeDataTitle()
     {
-        return $this->scopeConfig->getValue('firstsection/firstgroup/customAttributeTitle');
+        $customAtributeTitle = $this->scopeConfig->getValue('firstsection/firstgroup/customAttributeTitle');
+        return $customAtributeTitle;
     }
+    /**
+     * Get oscommerce version to import from  configuration
+     *
+     * @return string $osVesionNo
+     */
+
     public function getOsVersion()
     {
-        return $this->scopeConfig->getValue('firstsection/firstgroup/OscVersion');
+        $osVesionNo = $this->scopeConfig->getValue('firstsection/firstgroup/oscVersion');
+        return $osVesionNo;
     }
-//add customizable options
+    /**
+     * Add custom options with products
+     *
+     * @param int $startLimit
+     * @param int $totalLimit
+     */
     public function addCustomOption($startLimit, $totalLimit)
     {
         $productId = '';
         $productIdProd = '';
         $prodSku = '';
         $catId = '';
-
         $chooseOption = 'Choose size';
         $customOptionName = $this->getCustomAttributeData();
         $customAttributeTitle = $this->getCustomAttributeDataTitle();
         $osVersion = $this->getOsVersion();
         $arrCustomAttributeTitle = explode(',', $customAttributeTitle);
         $arrCustomOptoin = explode(',', $customOptionName);
+        //check oscommerce version
         if ($osVersion == '1.0.0') {
             if (isset($arrCustomOptoin[0]) && $arrCustomOptoin[0] != '') {
                 foreach ($arrCustomOptoin as $key => $attribute) {
@@ -944,27 +1288,35 @@ class ExternalDb
                 }
             }
         }
-//other version data attribute
+        //other version data attribute
         if ($osVersion != '1.0.0') {
             if ($results = $this->newDbConnection()->fetchAll($this->queryCustomProductAttributes())) {
                 try {
                     $this->getCustomOptionVersionTwo();
-
                     $arrValue = [];
                     $optionName = '';
                     $exist = false;
                     foreach ($results as $prod) {
                         $this->getCustomOptionVersionTwo($prod);
                     }
+
                     return "Customizable options has been added";
                 } catch (\Exception $e) {
-                    //$this->logger->critical($e->getMessage());
                     return $e->getMessage();
                 }
             }
         }
     }
-    //
+    /**
+     * Set/add  custom options  for version
+     *
+     * @param string $attribute
+     * @param int $startLimit
+     * @param int $totalLimit
+     * @param string $attributeTitle
+     * @return string $message
+     * @throws Exception
+     */
     public function getOptionVersionOne($attribute, $startLimit, $totalLimit, $attributeTitle = '')
     {
         if ($attributeTitle == '') {
@@ -1031,9 +1383,9 @@ class ExternalDb
                     foreach ($product->getOptions() as $opt) {
                         if ($opt['default_title'] == $attributeTitle) {
                             $exist = true;
-                            //"product option already added";
                         }
                     }
+
                     if (!$exist) {
                         foreach ($options as $arrayOption) {
                             $option = $this->productOptionFactory->create();
@@ -1043,18 +1395,26 @@ class ExternalDb
                             $product->addOption($option);
                         }
                     }
+
                     $product->setCustomAttribute('poster_size', $selectedSize);
                     $this->productRepository->save($product);
 
                     $this->setOptionValue($nCounter);
                 }
-                return "Customizable options has been added";
+                $message = "Customizable options has been added";
+                return $message;
             } catch (\Exception $e) {
-                //$this->logger->critical($e->getMessage());
                 return $e->getMessage();
             }
         }
     }
+    /**
+     * Get custom product option price
+     *
+     * @param int $optionPrice
+     * @param string $proSize
+     * @return string $selectedSize
+     */
     public function checkOptionPrice($optionPrice, $proSize)
     {
         if (abs($optionPrice) == 0) {
@@ -1062,8 +1422,18 @@ class ExternalDb
         } else {
             $selectedSize = '';
         }
+
         return $selectedSize;
     }
+
+    /**
+     * Add  custom product option for future version
+     *
+     * @param array $prod
+     * @param string $proSize
+     * @return string $message
+     * @throws Exception
+     */
     public function getCustomOptionVersionTwo($prod)
     {
         try {
@@ -1101,6 +1471,7 @@ class ExternalDb
                             'sort_order' => 0,
                         ];
                     }
+
                     $options = [
 
                         [
@@ -1131,14 +1502,20 @@ class ExternalDb
                     $product->addOption($option);
                 }
             }
+
             $this->productRepository->save($product);
-            return "Customizable options has been added";
+            $message = "Customizable options has been added";
+            return $message;
         } catch (\Exception $e) {
-            //$this->logger->critical($e->getMessage());
             return $e->getMessage();
         }
     }
-    //get product option by product id
+    /**
+     * Query   custom product option by product id
+     *
+     * @param int $id
+     * @return string $select
+     */
 
     public function queryGetCustomProductAttributesById($id)
     {
@@ -1154,7 +1531,12 @@ class ExternalDb
         return $select;
     }
 
-    //get product option by product id
+    /**
+     * Query custom product option detial by option id
+     *
+     * @param int $id
+     * @return string $select
+     */
 
     public function queryGetOptionDetial($id)
     {
@@ -1164,7 +1546,13 @@ class ExternalDb
             ->where('products_options_id = ?', $id);
         return $select;
     }
-    //get option details
+    /**
+     * Query custom product option detial by option id and product id
+     *
+     * @param int $optionId
+     * @param int $productId
+     * @return string $select
+     */
 
     public function queryGetOptionData($optionId, $productId)
     {
@@ -1179,7 +1567,14 @@ class ExternalDb
             ->where($column1 . '=' . $column2);
         return $select;
     }
-
+    /**
+     * Query get custom product option by name and limit
+     *
+     * @param string $attribute
+     * @param int $startLimit
+     * @param int $totalLimit
+     * @return string $select
+     */
     public function queryCustomOptions($attribute, $startLimit, $totalLimit)
     {
         $select = $this->newDbConnection()
@@ -1190,10 +1585,14 @@ class ExternalDb
             ->where($this->getDbPrefix() . 'products.' . $attribute . '_prices  <> "s:0:\"\"" ')
             ->order($this->getDbPrefix() . 'products.products_id', 'ASC');
         $limit = " LIMIT $startLimit,$totalLimit";
-        //$select
         return $select . $limit;
-        //return $select;
     }
+    /**
+     * Query count total custom product option
+     *
+     * @param string $attribute
+     * @return string $select
+     */
     public function queryCustomOptionsCount($attribute)
     {
         $select = $this->newDbConnection()
@@ -1203,11 +1602,13 @@ class ExternalDb
             ->where($this->getDbPrefix() . 'products.' . $attribute . '  <> "" ')
             ->where($this->getDbPrefix() . 'products.' . $attribute . '_prices  <> "s:0:\"\"" ')
             ->order($this->getDbPrefix() . 'products.products_id', 'ASC');
-        //$limit = " LIMIT $startLimit,$totalLimit";
-        //$select;
-        //return $select . $limit;
         return $select;
     }
+    /**
+     * Query all custom product attribute
+     *
+     * @return string $select
+     */
     public function queryCustomProductAttributes()
     {
         $select = $this->newDbConnection()
@@ -1217,7 +1618,11 @@ class ExternalDb
             ->order($this->getDbPrefix() . 'products_attributes.products_id', 'ASC');
         return $select;
     }
-
+    /**
+     * Query products oscommerce
+     *
+     * @return string $select
+     */
     public function queryProductsInfo()
     {
 
@@ -1234,10 +1639,21 @@ class ExternalDb
             ->order($this->getDbPrefix() . 'products.products_id', 'ASC');
         return $select;
     }
+    /**
+     * Query for internal use/check function
+     *
+     * @return string $select
+     */
     public function printQuery()
     {
-        return $this->queryProductsInfo();
+        $select = $this->queryProductsInfo();
+        return $select;
     }
+    /**
+     * Query get attribute set by id
+     *
+     * @return string $select
+     */
     public function getAtributeSet($id)
     {
         $select = $this->newDbConnection()
@@ -1247,6 +1663,12 @@ class ExternalDb
             ->where('language_id=1');
         return $select;
     }
+    /**
+     * Query get all attribute set
+     *
+     * @return string $select
+     */
+
     public function getAllAtrributeSet()
     {
 
@@ -1257,7 +1679,11 @@ class ExternalDb
             ->order($this->getDbPrefix() . 'productstype.id', 'ASC');
         return $select;
     }
-
+    /**
+     * Query get attribute translation
+     *
+     * @return string $select
+     */
     public function getAttributeTranslationCount()
     {
         $select = $this->newDbConnection()
@@ -1266,6 +1692,12 @@ class ExternalDb
             ->group($this->getDbPrefix() . 'productstype.language_id');
         return $select;
     }
+    /**
+     * Replace special language charactors with proper alternate
+     *
+     * @param string $str
+     * @return string $replaceValue
+     */
     public function removeAccent($str)
     {
         $a = ['À', 'Á', 'Â', 'Ã', 'Ä', 'Å', 'Æ', 'Ç',
@@ -1301,8 +1733,15 @@ class ExternalDb
             'U', 'u', 'W', 'w', 'Y', 'y', 'Y', 'Z', 'z', 'Z', 'z', 'Z', 'z', 's', 'f',
             'O', 'o', 'U', 'u', 'A', 'a', 'I', 'i', 'O', 'o', 'U', 'u', 'U', 'u', 'U',
             'u', 'U', 'u', 'U', 'u', 'A', 'a', 'AE', 'ae', 'O', 'o'];
-        return str_replace($a, $b, $str);
+        $replaceValue = str_replace($a, $b, $str);
+        return $replaceValue;
     }
+    /**
+     * Get product ot category relateionship by product id
+     *
+     * @param int $id
+     * @return string $select
+     */
     public function productToCat($id)
     {
         $select = $this->newDbConnection()
@@ -1311,6 +1750,12 @@ class ExternalDb
             ->where('products_id=?', $id);
         return $select;
     }
+    /**
+     * Replace special charactors with proper alternate
+     *
+     * @param string $urlKey
+     * @return string $urlKey
+     */
     public function removeSpecialChar($urlKey)
     {
         $urlKey = preg_replace('/&/', '', $urlKey);
@@ -1334,6 +1779,13 @@ class ExternalDb
         $urlKey = preg_replace('/--/', '-', $urlKey);
         return $urlKey;
     }
+    /**
+     * Get product information by limit
+     *
+     * @param int $startLimit
+     * @param int $totalLimit
+     * @return string $select
+     */
     public function getAllProductDetials($startLimit, $totalLimit)
     {
         $select = $this->newDbConnection()
@@ -1343,7 +1795,14 @@ class ExternalDb
         $limit = " LIMIT $startLimit,$totalLimit";
         return $select . $limit;
     }
-    //get all categories description by ID
+
+    /**
+     * Get product description by id
+     *
+     * @param int $id
+     * @return string $select
+     */
+
     public function getProductDescription($id)
     {
         $select = $this->newDbConnection()
@@ -1378,7 +1837,6 @@ class ExternalDb
 
         $stores = $this->storeManagerInterface->getStores();
         /** @var \Magento\Store\Model\Store $store */
-        //$store = $objectManager->create(\Magento\Store\Model\Store::class);
         $store = $this->storeModel->load($storeId);
         /* 'code' is required attr. and should be set for existing store */
         $event = $store->getCode() === null ? 'store_add' : 'store_edit';
@@ -1388,6 +1846,7 @@ class ExternalDb
                 $mstore['store_id'];
             }
         }
+
         $store->setIsActive($isActive);
         if ($name !== null) {
             $store->setName($name);
@@ -1412,16 +1871,32 @@ class ExternalDb
         $store->save();
         return $store;
     }
-
+    /**
+     * Get product image path from configurations
+     *
+     * @return string $productImagePath
+     */
     public function getImagePathProduct()
     {
-        return $this->scopeConfig->getValue('firstsection/firstgroup/productImagePath');
+        $productImagePath = $this->scopeConfig->getValue('firstsection/firstgroup/productImagePath');
+        return $productImagePath;
     }
+    /**
+     * Get category image path from configurations
+     *
+     * @return string $categoryImagePath
+     */
     public function getImagePathCategory()
     {
-        return $this->scopeConfig->getValue('firstsection/firstgroup/categoryImagePath');
+        $categoryImagePath = $this->scopeConfig->getValue('firstsection/firstgroup/categoryImagePath');
+        return $categoryImagePath;
     }
-
+    /**
+     * Remove all categories from database
+     *
+     * @return boolean
+     * @throws Exception
+     */
     public function deleteCategoryData()
     {
         $arrtableNames = ['catalog_category_entity',
@@ -1441,6 +1916,7 @@ class ExternalDb
         foreach ($arrtableNames as $table) {
             $result = $connection->truncateTable($table);
         }
+
         $timestamp = date('Y-m-d H:i:s');
         $insertData = [
             [
@@ -1544,6 +2020,7 @@ class ExternalDb
         } catch (\Exception $e) {
             return $e;
         }
+
         $connection->query('SET FOREIGN_KEY_CHECKS = 1');
         if ($result) {
             return true;
@@ -1551,7 +2028,12 @@ class ExternalDb
             return false;
         }
     }
-
+    /**
+     * Remove all products from database
+     *
+     * @return boolean
+     * @throws Exception
+     */
     public function deleteProductData()
     {
         $arrtableNames = ['cataloginventory_stock_item',
@@ -1667,6 +2149,7 @@ class ExternalDb
         } catch (\Exception $e) {
             return $e;
         }
+
         $connection->query('SET FOREIGN_KEY_CHECKS = 1');
         if ($result) {
             return true;

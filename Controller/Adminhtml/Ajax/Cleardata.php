@@ -1,21 +1,37 @@
 <?php
+/**
+ * Copyright © Embrace-it, Inc. All rights reserved.
+ */
+
 namespace Embraceit\OscommerceToMagento\Controller\Adminhtml\Ajax;
 
 use Embraceit\OscommerceToMagento\Model\ExternalDb as ModelExternalDb;
-//use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Session\SessionManagerInterface;
 
+/**
+ * Ajax controller for delete catetory/product data
+ */
 class Cleardata extends \Magento\Backend\App\Action
 {
     /**
      * @var \Magento\Framework\View\Result\PageFactory
      */
     protected $pageFactory;
+    /**
+     * @var Embraceit\OscommerceToMagento\Model\ExternalDb
+     */
     protected $modelExternalDb;
+    /**
+     * @var SessionManagerInterface
+     */
     protected $coreSession;
+    /**
+     * @var Magento\Framework\Controller\Result\JsonFactory
+     */
     protected $jsonFactory;
-    const CLEARED_DATA = 'data has Clean';
+
+    const CLEARED_DATA = 'data has Cleaned';
     const CLEARED_ERROR = 'There is error in clearning data please try again';
     const DEFAULT_MESSAGE = 'No action taken';
     /**
@@ -41,6 +57,7 @@ class Cleardata extends \Magento\Backend\App\Action
      */
     public function execute()
     {
+        //get requests parameters
         $post = $this->getRequest()->getPostValue();
         if (isset($post['clean_type'])) {
             if ($post['clean_type'] == 'category') {

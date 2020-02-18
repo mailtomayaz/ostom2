@@ -23,10 +23,10 @@ class Index extends Action
     }
     public function execute()
     {
-        $hostName=$this->scopeConfig->getValue('firstsection/firstgroup/DbHostName');
-        $databaseName=$this->scopeConfig->getValue('firstsection/firstgroup/DbName');
-        $databseUserName=$this->scopeConfig->getValue('firstsection/firstgroup/DbUserName');
-        $databsePassword=$this->scopeConfig->getValue('firstsection/firstgroup/DbPassword');
-        $osVersion=$this->scopeConfig->getValue('firstsection/firstgroup/OscVersion');
+        $hostName=$this->scopeConfig->getValue('firstsection/firstgroup/dbHostName');
+        $databaseName=$this->scopeConfig->getValue('firstsection/firstgroup/osDbName');
+        $databseUserName=$this->scopeConfig->getValue('firstsection/firstgroup/dbUserName');
+        $databsePassword=$this->scopeConfig->getValue('firstsection/firstgroup/dbPassword');
+        $osVersion=$this->scopeConfig->getValue('firstsection/firstgroup/oscVersion');
     }
 }

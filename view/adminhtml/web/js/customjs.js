@@ -1,6 +1,6 @@
 /**
 * Copyright © embraceit, Inc. All rights reserved.
-* See COPYING.txt for license details.
+* This file contians functions that use to send and recive data from magento
 * custom js functions and calls
 */
 define([
@@ -9,9 +9,9 @@ define([
     'accordion'
 ], function ($, modal) {
     "use strict";
-    function main(config, element)
+    function main(config)
     {
-        var $element = $(element);
+        //var $element = $(element);
         var databaseTestUrl = config.databaseTestUrl;
         var formKey = config.formKey;
         var chunkSize = config.chunkSize;
@@ -24,25 +24,31 @@ define([
         var addProductUrl = config.addProductUrl;
         var addProductCustomOptionUrl = config.addProductCustomOptionUrl;
         var cleanDataUrl = config.cleanDataUrl;
+        var entityData = [];
+        entityData['url'] = [];
+        entityData['recordLimit'] = [];
+        entityData['startAt'] = [];
+        entityData['mainDiv'] = '';
+        entityData['progressDiv'] = '';
+        entityData['entityType'] = '';
+        entityData['progresCounterController'] = '';
+        entityData['progressBarDiv'] = '';
+        entityData['barMessageDiv'] = '';
+        entityData['statusMessage'] = '';
         var message = '';
         var totalChunks;
         var numberOfChunks;
         var chunck;
         var realCounter;
         var i;
+
         $(document).ready(function () {
-            var entityData = [];
-            entityData['url'] = [];
-            entityData['recordLimit'] = [];
-            entityData['startAt'] = [];
-            entityData['mainDiv'] = '';
-            entityData['progressDiv'] = '';
-            entityData['entityType'] = '';
-            entityData['progresCounterController'] = '';
-            entityData['progressBarDiv'] = '';
-            entityData['barMessageDiv'] = '';
-            entityData['statusMessage'] = '';
-            //check database connection
+            /**
+             * check database connection
+             * @param {string} customurl - url of the contorller to check database connection.
+             * @return {string} message - databse connected or not.
+             */
+
             $('.checkConnection').click(function () {
                 var customurl = databaseTestUrl;
                 $.ajax({
@@ -54,10 +60,10 @@ define([
                         form_key: formKey,
                     },
                     complete: function (response) {
-
                         message = response.responseJSON.messageConnection;
                         $('.dataimportdiv').css('display', 'block');
-                        alert(message);
+                        $(".import-status").html(message);
+                        $("#button-modal").trigger('click');
                     },
                     error: function (xhr, status, errorThrown) {
                         console.log('Error happens. Try again.');
@@ -65,8 +71,14 @@ define([
                 });
             });
 
-            //import categories
-            $('.importCategories').click(function () {
+            /**
+             * import categories
+             * @param {string} customurl - url of the contorller to check send ajax request
+             * @param {Number} catCount - total number of categoires in oscommerce database
+             * @param {Number} totalLimit - chunksize configured in backend.
+             */
+
+            $('.import-categories').click(function () {
 
                 var customurl = addCategoriesUrl;
                 totalChunks = Number(catCount) / totalLimit;
@@ -74,34 +86,42 @@ define([
                 chunck = Number(numberOfChunks);
                 entityData['totalChunks'] = numberOfChunks;
                 entityData['chunkSize'] = totalLimit;
-                entityData['mainDiv'] = 'importCategories';
-                entityData['progressDiv'] = 'progressdiv';
+                entityData['mainDiv'] = 'import-categories';
+                entityData['progressDiv'] = 'progress-category';
                 entityData['entityType'] = 'category';
                 entityData['progresCounterController'] = 'Getdata';
-                entityData['progressBarDiv'] = 'progressbar';
-                entityData['barMessageDiv'] = 'uk-progress-bar';
+                entityData['progressBarDiv'] = 'progress-bar-category';
+                entityData['barMessageDiv'] = 'category-progress-bar';
                 entityData['statusMessage'] = 'status-progress-bar';
                 entityData['totalCount'] = catCount;
-
+                //setup chunks
                 for (i = 0; i < numberOfChunks; i++) {
                     entityData['url'][i] = customurl;
                     entityData['recordLimit'][i] = Number(i * entityData['chunkSize']);
                     entityData['startAt'][i] = totalLimit;
                 }
-                //recordLimit
+                //start from chunk 0
                 var index = 0;
+                //process category import
+                $('#chunk-size').html(entityData['chunkSize']);
                 getAjaxEntityInformation(index, entityData);
 
             });
 
-            //get information of entity
+            /**
+             * process import
+             * @param {Number} index - chunk number
+             * @param {array} entityData - contians neccessory data for import.
+             */
             function getAjaxEntityInformation(index, entityData)
             {
+                chunkSize=Number(entityData['chunkSize']);
                 if (Number(index + 1) == Number(entityData['totalChunks'])) {
                     //remaning items
                     chunkSize = Number(entityData['totalCount']) % Number(entityData['chunkSize']);
                 }
-                realCounter = progressCounterEntity(chunkSize, entityData['totalChunks'], index);
+                //import progress status
+
                 if (typeof realCounter === 'undefined') {
                     realCounter = 0;
                 }
@@ -115,148 +135,177 @@ define([
                     beforeSend: function () {
                         $('.' + entityData['mainDiv']).prop('disabled', true);
                         $('.' + entityData['progressDiv']).css('display', 'block');
-
+                        //
+                        $('#chunk-number').html(index);
+                        $('#chunk-size').html(chunkSize);
+                        realCounter = progressCounterEntity(chunkSize, entityData['totalChunks'], index);
                     },
                     success: function (response) {
                         if (response.importStatus != true) {
                             $('.' + entityData['progressDiv'][index]).css('display', 'block');
                             message = response.importStatus;
-                            $(".categorystatus").html(message);
-                            $("#openModel").trigger('click');
+                            $(".import-status").html(message);
+                            $("#button-modal").trigger('click');
                             $('.' + entityData['mainDiv']).prop('disabled', false);
                             return;
                         }
                         index++;
                         if (entityData['url'][index] != undefined) {
+                            //again process for next chunk of data
                             getAjaxEntityInformation(index, entityData);
                         }
-                        if (Number(index + 1) == Number(entityData['totalChunks'][index])) {
-                            if (Number(realCounter) == chunkSize) {
-                                message = 'Data has been added';
-                                $(".categorystatus").html(message);
-                                $("#openModel").trigger('click');
-                                $('.' + entityData['mainDiv']).prop('disabled', false);
-                            }
-                        }
-
                     },
                     error: function (xhr, status, errorThrown) {
                         console.log('Error happens. Try again.');
+                        alert(errorThrown);
+                        xhr.abort();
                     }
                 });
             }
 
-            //progress counter
+            /**
+             * progress counter
+             * @param {Number} chunkSize - number or recoreds in each chunck
+             * @param {Number} totalChunks - total chunks of data.
+             * @param {Number} index - current chunk number
+             */
             function progressCounterEntity(chunkSize, totalChunks, index)
             {
                 var barValue;
-                var animate = setInterval(function () {
-                    var customurl = ajaxBaseUrl + entityData['progresCounterController'];
-                    var bar = document.getElementById(entityData['progressBarDiv']);
-                    bar.max = chunkSize;
-                    bar.value = 1; // completed Steps
-                    $.ajax({
-                        url: customurl,
-                        type: 'POST',
-                        dataType: 'json',
-                        asyn: false,
-                        data: {
-                            form_key: formKey,
-                        },
-                        success: function (response) {
-                            message = response.counter;
-                            console.log(response.counter);
-                            if (typeof response.counter == 'undefined') {
-                                message = 0;
-                            }
-                            barValue = message;
-                            var barmessage = $('.' + entityData['barMessageDiv']);
-                            var statusmessage = $('.' + entityData['statusMessage']);
-                            var percent = Math.floor((barValue / chunkSize) *
-                                100);
-                            statusmessage.text(barValue + ' out of ' + chunkSize +
-                                ' (' + percent + ' %) Completed! Total Chunks ' +
-                                Math.round(totalChunks) + ' Processing Chunk ' +
-                                Number(index + 1));
-                            barmessage.css({
-                                'width': percent + '%',
-                                'background': 'green'
-                            });
+                // var animate = setInterval(function () {
+                var customurl = ajaxBaseUrl + entityData['progresCounterController'];
+                var bar = document.getElementById(entityData['progressBarDiv']);
+                bar.max = chunkSize;
+                bar.value = 1; // completed Steps
+                var isMessageDisplayed=false;
+                $.ajax({
+                    url: customurl,
+                    type: 'POST',
+                    dataType: 'json',
+                    asyn: false,
+                    data: {
+                        form_key: formKey,
+                    },
+                    success: function (response, textStatus, jqXHR) {
+                        message = response.counter;
+                        //console.log(response.counter);
+                        if (typeof response.counter == 'undefined') {
+                            message = 0;
+                        }
+                        barValue = message;
+                        var barmessage = $('.' + entityData['barMessageDiv']);
+                        var statusmessage = $('.' + entityData['statusMessage']);
+                        var percent = Math.floor((barValue / chunkSize) *
+                            100);
+                            $('#progress-counter').html(barValue);
+                        statusmessage.text(barValue + ' out of ' + chunkSize +
+                            ' (' + percent + ' %) Completed! Total Chunks ' +
+                            Math.round(totalChunks) + ' Processing Chunk ' +
+                            Number(index + 1));
+                        barmessage.css({
+                            'width': percent + '%',
+                            'background': 'green'
+                        });
 
-                            if (barValue >= bar.max) {
-                                clearInterval(animate);
-                            }
-                            //return barValue;
-                            if (Number(index + 1) == Number(totalChunks) && Number(chunkSize) == Number(message)) {
+                        //return barValue;
+                        if (Number(index + 1) == Number(totalChunks) && Number(chunkSize) == Number(message)) {
+                            setTimeout(function () {
                                 message = entityData['entityType'] + " has been added";
                                 $('.dataimportdiv').css('display', 'block');
-                                $(".categorystatus").html(message);
-                                $("#openModel").trigger('click');
+                                $(".import-status").html(message);
+                                $("#button-modal").trigger('click');
                                 $('.' + entityData['mainDiv']).prop('disabled', false);
-                            }
-
-                        },
-                        error: function (xhr, status, errorThrown) {
-                            console.log('Error happens. Try again.');
+                            }, 5000);
+                            jqXHR.abort();
+                        } else {
+                            index = $('#chunk-number').text();
+                            chunkSize = $('#chunk-size').text();
+                            progressCounterEntity(chunkSize, totalChunks, Number(index));
                         }
-                    });
-                    return barValue;
-                }, 5000);
-                //return barValue;
+
+                        //return barValue;
+                    },
+                    error: function (xhr, status, errorThrown) {
+                        console.log('Error happens. Try again.');
+                        progressCounterEntity(chunkSize, totalChunks, index);
+                    }
+                });
+
             }
-            //import products
-            $('.importProducts').click(function () {
+            /**
+             * import products
+             * @param {string} customurl - url of the contorller to check send ajax request
+             * @param {Number} productCount - total number of products in oscommerce database
+             * @param {Number} totalLimit - chunksize configured in backend.
+             */
+            $('.import-products').click(function () {
                 var customurl = addProductUrl;
                 totalChunks = Number(productCount) / totalLimit;
                 numberOfChunks = Math.round(totalChunks);
                 chunck = Number(numberOfChunks);
                 entityData['totalChunks'] = numberOfChunks;
                 entityData['chunkSize'] = totalLimit;
-                entityData['mainDiv'] = 'importProducts';
-                entityData['progressDiv'] = 'progressdivproduct';
+                entityData['mainDiv'] = 'import-products';
+                entityData['progressDiv'] = 'progress-product';
                 entityData['entityType'] = 'product';
                 entityData['progresCounterController'] = 'Getproductdata';
-                entityData['progressBarDiv'] = 'progressbarproduct';
+                entityData['progressBarDiv'] = 'progress-bar-product';
                 entityData['barMessageDiv'] = 'product-progress-bar';
                 entityData['statusMessage'] = 'product-status-progress-bar';
                 entityData['totalCount'] = productCount;
 
+                //genrate chunks to process one by one
                 for (i = 0; i < numberOfChunks; i++) {
                     entityData['url'][i] = customurl;
                     entityData['recordLimit'][i] = Number(i * entityData['chunkSize']);
                     entityData['startAt'][i] = totalLimit;
                 }
-                //recordLimit
+                //start from chunk 0
                 var index = 0;
+                //process import
+                $('#chunk-size').html(entityData['chunkSize']);
                 getAjaxEntityInformation(index, entityData)
             });
-            //import custom options
-            $('.importProductsCustomizeOptions').click(function () {
+            /**
+            * import custom options
+            * @param {string} customurl - url of the contorller to check send ajax request
+            * @param {Number} customOptionCount - total number of custom option in oscommerce database
+            * @param {Number} totalLimit - chunksize configured in backend.
+            */
+            $('.import-products-options').click(function () {
                 var customurl = addProductCustomOptionUrl;
                 totalChunks = Number(customOptionCount) / totalLimit;
                 numberOfChunks = Math.round(totalChunks);
                 chunck = Number(numberOfChunks);
                 entityData['totalChunks'] = numberOfChunks;
                 entityData['chunkSize'] = totalLimit;
-                entityData['mainDiv'] = 'importProductsCustomizeOptions';
-                entityData['progressDiv'] = 'progressdivoptions';
+                entityData['mainDiv'] = 'import-products-options';
+                entityData['progressDiv'] = 'progress-options';
                 entityData['entityType'] = 'Options';
                 entityData['progresCounterController'] = 'Getdataoptions';
-                entityData['progressBarDiv'] = 'progressbaroption';
+                entityData['progressBarDiv'] = 'progress-bar-options';
                 entityData['barMessageDiv'] = 'option-progress-bar';
                 entityData['statusMessage'] = 'option-status-progress-bar';
                 entityData['totalCount'] = customOptionCount;
-
+                //setup chunks of data
                 for (i = 0; i < numberOfChunks; i++) {
                     entityData['url'][i] = customurl;
                     entityData['recordLimit'][i] = Number(i * entityData['chunkSize']);
                     entityData['startAt'][i] = totalLimit;
                 }
-                //recordLimit
+                //start from chunk 0
                 var index = 0;
+                //process import
+                $('#chunk-size').html(entityData['chunkSize']);
                 getAjaxEntityInformation(index, entityData)
             });
-            //clean data category
+
+            /**
+            * clean data category
+            * @param {string} cleanDataUrl - url of the contorller to check send ajax request
+            * @param {string} clean_type - type of data to clean
+            * @param {string} form_key - magento form key for security
+            */
 
             $('.clean-category-data').click(function () {
                 var url = cleanDataUrl;
@@ -273,14 +322,23 @@ define([
                     },
                     complete: function (response) {
                         message = response.responseJSON.message;
-                        alert(message);
+                        $('.dataimportdiv').css('display', 'block');
+                        $(".import-status").html(message);
+                        $("#button-modal").trigger('click');
 
                     },
                     error: function (xhr, status, errorThrown) { },
                     success: function () { }
                 });
             });
-            //clean product data
+
+            /**
+            * clean product data
+            * @param {string} cleanDataUrl - url of the contorller to check send ajax request
+            * @param {string} clean_type - type of data to clean
+            * @param {string} form_key - magento form key for security
+            */
+
             $('.clean-products-data').click(function () {
                 var url = cleanDataUrl;
                 $.ajax({
@@ -296,7 +354,9 @@ define([
                     },
                     complete: function (response) {
                         message = response.responseJSON.message;
-                        alert(message);
+                        $('.dataimportdiv').css('display', 'block');
+                        $(".import-status").html(message);
+                        $("#button-modal").trigger('click');
 
                     },
                     error: function (xhr, status, errorThrown) { },
@@ -307,6 +367,7 @@ define([
 
             //accrodin initiaization
             $("#element").accordion();
+            //configure accordion
             var options = {
                 type: 'popup',
                 responsive: true,
@@ -320,9 +381,10 @@ define([
                     }
                 }]
             };
-            var popup = modal(options, $('#myModel'));
-            $("#openModel").on("click", function () {
-                $('#myModel').modal('openModal');
+            //model settings
+            var popup = modal(options, $('#model-window'));
+            $("#button-modal").on("click", function () {
+                $('#model-window').modal('openModal');
             });
 
         });

@@ -1,19 +1,18 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright © Embraceit, Inc. All rights reserved.
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
         <firstsection>
             <firstgroup>
-                <DbHostName>127.0.0.1</DbHostName>
-                <DbName>posterland</DbName>
-                <DbUserName>ayaz</DbUserName>
-                <DbPassword>admin123</DbPassword>
-                <OscVersion>Ver 1.0.0</OscVersion>
+                <dbHostName>127.0.0.1</dbHostName>
+                <osDbName>posterland</osDbName>
+                <dbUserName>ayaz</dbUserName>
+                <dbPassword>admin123</dbPassword>
+                <oscVersion>Ver 1.0.0</oscVersion>
                 <dataChunkSize>500</dataChunkSize>
             </firstgroup>
         </firstsection>

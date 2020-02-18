@@ -1,23 +1,39 @@
 <?php
+/**
+ * Copyright © Embrace-it, Inc. All rights reserved.
+ */
 namespace Embraceit\OscommerceToMagento\Controller\Adminhtml\Ajax;
 
-use Magento\Framework\Controller\Result\JsonFactory;
-//use Magento\Framework\Controller\Result\JsonFactory;
 use Embraceit\OscommerceToMagento\Model\ExternalDb as ModelExternalDb;
+use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Session\SessionManagerInterface;
 
+/**
+ * Ajax controller for custom product import progress
+ */
 class Getdataoptions extends \Magento\Backend\App\Action
 {
     /**
      * @var \Magento\Framework\View\Result\PageFactory
      */
     protected $pageFactory;
+    /**
+     * @var Embraceit\OscommerceToMagento\Model\ExternalDb
+     */
     protected $modelExternalDb;
+    /**
+     * @var SessionManagerInterface
+     */
     protected $coreSession;
+    /**
+     * @var Magento\Framework\Controller\Result\JsonFactory
+     */
     protected $jsonFactory;
     /**
      * @param \Magento\Framework\App\Action\Context $context
      */
+    protected $context;
+
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\View\Result\PageFactory $pageFactory,
@@ -26,9 +42,9 @@ class Getdataoptions extends \Magento\Backend\App\Action
         JsonFactory $jsonFactory
     ) {
         $this->pageFactory = $pageFactory;
-        $this->modelExternalDb=$modelExternalDb;
+        $this->modelExternalDb = $modelExternalDb;
         $this->jsonFactory = $jsonFactory;
-        $this->coreSession=$coreSession;
+        $this->coreSession = $coreSession;
         return parent::__construct($context);
     }
     /**
@@ -39,10 +55,11 @@ class Getdataoptions extends \Magento\Backend\App\Action
     public function execute()
     {
 
-        $countRecord=$this->modelExternalDb->getOptionValue();
+        $countRecord = $this->modelExternalDb->getOptionValue();
         if ($countRecord == '') {
             $countRecord = 0;
         }
-        return $this->jsonFactory->create()->setData(['counter'=>$countRecord]);
+
+        return $this->jsonFactory->create()->setData(['counter' => $countRecord]);
     }
 }

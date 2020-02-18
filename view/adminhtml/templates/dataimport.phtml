@@ -1,24 +1,31 @@
-<div id="loader"></div>
-<span>
-    <div id='progressCounter'></div>
-</span>
-<button type="button" id="openModel" class="btn btn-primary" style="display:none;">Open Model</button>
-<div id="myModel">
-    <h1>Status</h1>
-    <div class="categorystatus">Content</div>
+<?php
+/**
+ * Copyright © Embrace-it, Inc. All rights reserved.
+ */
+
+/**
+ * @var $block  Embraceit\OscommerceToMagento\Block\Adminhtml\Datacheck
+ */
+?>
+<div id='chunk-number'></div>
+<div id='chunk-size'></div>
+<div id='progress-counter'></div>
+<button type="button" id="button-modal" class="btn btn-primary button-modal">Open Model</button>
+<div id="model-window">
+    <div class="import-status"></div>
 </div>
 <div id="container" class="main-col">
     <div class="row">
         <div class="col-m-8 col-m-push-2">
-            <div id="element" class="collapsibleContainer">
-                <div class="collapsibleTab" data-role="collapsible">
+            <div id="element" class="collapsible-container-accordian">
+                <div class="collapsible-tab-accordian" data-role="collapsible">
                     <div data-role="trigger">
                         <span>Clean Data</span>
                     </div>
                 </div>
-                <div class="collapsibleContent" data-role="content">
+                <div class="collapsible-content-tab" data-role="content">
 
-                    <table class="bottomBorder">
+                    <table class="bottom-border-table">
                         <thead>
                             <tr>
                                 <th scope="col"></th>
@@ -40,28 +47,16 @@
                                 <td></td>
                                 <td> <button class="clean-products-data">Clean All Products </button></td>
                             </tr>
-                            <tr>
-                                <td colspan="7">
-                                    <!--progress bar-->
-                                    <div style="width: 100%;display:none" class="progressdivoptions">
-                                        <div class="option-status-progress-bar"></div>
-                                        <div id="progressbaroption" class="option-progress option-progress-success">
-                                            <div class="option-progress-bar" style="width: 0%;"></div>
-                                        </div>
-                                    </div>
-                                    <!--progress bar-->
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
-                <div class="collapsibleTab" data-role="collapsible">
+                <div class="collapsible-tab-accordian" data-role="collapsible">
                     <div data-role="trigger">
                         <span>Database Connection</span>
                     </div>
                 </div>
-                <div class="collapsibleContent" data-role="content">
-                    <table class="bottomBorder">
+                <div class="collapsible-content-tab" data-role="content">
+                    <table class="bottom-border-table">
                         <thead>
                             <tr>
                                 <th scope="col">Host</th>
@@ -88,13 +83,13 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="collapsibleTab" data-role="collapsible">
+                <div class="collapsible-tab-accordian" data-role="collapsible">
                     <div data-role="trigger">
                         <span>Import Categories</span>
                     </div>
                 </div>
-                <div class="collapsibleContent" data-role="content">
-                    <table class="bottomBorder">
+                <div class="collapsible-content-tab" data-role="content">
+                    <table class="bottom-border-table">
                         <thead>
                             <tr>
                                 <th scope="col">Total</th>
@@ -114,15 +109,16 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td><button class="importCategories">Import Categories</button></td>
+                                <td><button class="import-categories">Import Categories</button></td>
                             </tr>
                             <tr>
                                 <td colspan="7">
                                     <!--progress bar-->
-                                    <div style="width: 100%;display:none" class="progressdiv">
+                                    <div class="progress-category">
                                         <div class="status-progress-bar"></div>
-                                        <div id="progressbar" class="uk-progress uk-progress-success">
-                                            <div class="uk-progress-bar" style="width: 0%;"></div>
+                                        <div id="progress-bar-category"
+                                            class="category-progress  category-progress-success">
+                                            <div class="category-progress-bar"></div>
                                         </div>
                                     </div>
                                     <!--progress bar-->
@@ -131,13 +127,13 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="collapsibleTab" data-role="collapsible">
+                <div class="collapsible-tab-accordian" data-role="collapsible">
                     <div data-role="trigger">
                         <span>Import Products</span>
                     </div>
                 </div>
-                <div class="collapsibleContent" data-role="content">
-                    <table class="bottomBorder">
+                <div class="collapsible-content-tab" data-role="content">
+                    <table class="bottom-border-table">
                         <thead>
                             <tr>
                                 <th scope="col">Total</th>
@@ -157,15 +153,16 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td> <button class="importProducts">Import Products</button></td>
+                                <td> <button class="import-products">Import Products</button></td>
                             </tr>
                             <tr>
                                 <td colspan="7">
                                     <!--progress bar-->
-                                    <div style="width: 100%;display:none" class="progressdivproduct">
+                                    <div class="progress-product">
                                         <div class="product-status-progress-bar"></div>
-                                        <div id="progressbarproduct" class="product-progress product-progress-success">
-                                            <div class="product-progress-bar" style="width: 0%;"></div>
+                                        <div id="progress-bar-product"
+                                            class="product-progress product-progress-success">
+                                            <div class="product-progress-bar"></div>
                                         </div>
                                     </div>
                                     <!--progress bar-->
@@ -174,13 +171,13 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="collapsibleTab" data-role="collapsible">
+                <div class="collapsible-tab-accordian" data-role="collapsible">
                     <div data-role="trigger">
                         <span>Import Custom Options</span>
                     </div>
                 </div>
-                <div class="collapsibleContent" data-role="content">
-                    <table class="bottomBorder">
+                <div class="collapsible-content-tab" data-role="content">
+                    <table class="bottom-border-table">
                         <thead>
                             <tr>
                                 <th scope="col">Total</th>
@@ -200,16 +197,16 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td> <button class="importProductsCustomizeOptions">Import Customizeable
+                                <td> <button class="import-products-options">Import Customizeable
                                         Options</button></td>
                             </tr>
                             <tr>
                                 <td colspan="7">
                                     <!--progress bar-->
-                                    <div style="width: 100%;display:none" class="progressdivoptions">
+                                    <div class="progress-options">
                                         <div class="option-status-progress-bar"></div>
-                                        <div id="progressbaroption" class="option-progress option-progress-success">
-                                            <div class="option-progress-bar" style="width: 0%;"></div>
+                                        <div id="progress-bar-options" class="option-progress option-progress-success">
+                                            <div class="option-progress-bar"></div>
                                         </div>
                                     </div>
                                     <!--progress bar-->

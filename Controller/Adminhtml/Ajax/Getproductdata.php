@@ -1,23 +1,39 @@
 <?php
+/**
+ * Copyright © Embrace-it, Inc. All rights reserved.
+ */
 namespace Embraceit\OscommerceToMagento\Controller\Adminhtml\Ajax;
 
 use Embraceit\OscommerceToMagento\Model\ExternalDb as ModelExternalDb;
-//use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Session\SessionManagerInterface;
 
+/**
+ * Ajax controller for product import progress
+ */
 class Getproductdata extends \Magento\Backend\App\Action
 {
     /**
      * @var \Magento\Framework\View\Result\PageFactory
      */
     protected $pageFactory;
+    /**
+     * @var Embraceit\OscommerceToMagento\Model\ExternalDb
+     */
     protected $modelExternalDb;
+    /**
+     * @var SessionManagerInterface
+     */
     protected $coreSession;
+    /**
+     * @var Magento\Framework\Controller\Result\JsonFactory
+     */
     protected $jsonFactory;
     /**
      * @param \Magento\Framework\App\Action\Context $context
      */
+    protected $context;
+
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\View\Result\PageFactory $pageFactory,

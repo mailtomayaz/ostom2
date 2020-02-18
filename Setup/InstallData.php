@@ -1,4 +1,7 @@
 <?php
+/**
+ * Copyright © Embrace-it, Inc. All rights reserved.
+ */
 namespace Embraceit\OscommerceToMagento\Setup;
 
 use Embraceit\OscommerceToMagento\Model\ExternalDb as ModelExternalDb;
@@ -11,7 +14,7 @@ use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 
 /**
- * @codeCoverageIgnore
+ * installing custom attribute category Id for keeping track of original category id
  */
 class InstallData implements InstallDataInterface
 {
@@ -52,8 +55,5 @@ class InstallData implements InstallDataInterface
                 'group' => 'General Information',
             ]
         );
-
-        //add attribute sets
-        //$this->modelExternalDb->addAttributeSet();
     }
 }
