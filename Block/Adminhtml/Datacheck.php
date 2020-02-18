@@ -74,6 +74,21 @@ class Datacheck extends Template
     }
 
     /**
+     * Category button stat
+     *
+     * @return string
+     */
+
+    public function getButtonStatCategory()
+    {
+        $categoryButtonStat = '';
+        $nCounter = $this->modelExternalDb->getCategoryCount();
+        if ($nCounter == 0) {
+            $categoryButtonStat = ' disabled=disabled';
+        }
+        return $categoryButtonStat;
+    }
+    /**
      * Import categories from Oscommerce to magento
      *
      * @return string
@@ -85,7 +100,7 @@ class Datacheck extends Template
         return $this->modelExternalDb->addCategory();
     }
     /**
-     * number of products in oscommerce database that need to import
+     * Number of products in oscommerce database that need to import
      *
      * @return integer
      */
@@ -94,7 +109,21 @@ class Datacheck extends Template
         return $this->modelExternalDb->getTotalProductsCount();
     }
     /**
-     * number of products in oscommerce database that need to import
+     * Button state of products
+     *
+     * @return string
+     */
+    public function getButtonStatProduct()
+    {
+        $buttonStatProduct = '';
+        $nCount = $this->modelExternalDb->getTotalProductsCount();
+        if ($nCount == 0) {
+            $buttonStatProduct = ' disabled=disabled ';
+        }
+        return $buttonStatProduct;
+    }
+    /**
+     * Number of products in oscommerce database that need to import
      *
      * @return integer
      */
@@ -203,6 +232,22 @@ class Datacheck extends Template
         }
 
         return $nCount;
+    }
+    /**
+     *  enable/disable buttons custom options
+     * @return int
+     */
+    public function getButtonStatCustomOption()
+    {
+        $nCount = $this->modelExternalDb->getTotalCustomOptionCount();
+        $buttonStatus = '';
+        if ($nCount == null) {
+            $nCount = 0;
+        }
+        if ($nCount == 0) {
+            $buttonStatus = ' disabled=disabled ';
+        }
+        return $buttonStatus;
     }
     /**
      *  config product image path

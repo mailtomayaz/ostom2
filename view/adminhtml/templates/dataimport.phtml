@@ -41,11 +41,13 @@
                             <tr>
                                 <td></td>
                                 <td></td>
-                                <td><button class="clean-category-data">Clean All Categories</button></td>
+                                <td><button <?=/* @noEscape */$block->getButtonStatCategory();?>
+                                        class="clean-category-data">Clean All Categories</button></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td> <button class="clean-products-data">Clean All Products </button></td>
+                                <td> <button <?=/* @noEscape */$block->getButtonStatProduct();?>
+                                        class="clean-products-data">Clean All Products </button></td>
                             </tr>
                         </tbody>
                     </table>
@@ -109,7 +111,8 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td><button class="import-categories">Import Categories</button></td>
+                                <td><button <?=/* @noEscape */$block->getButtonStatCategory();?>
+                                        class="import-categories">Import Categories</button></td>
                             </tr>
                             <tr>
                                 <td colspan="7">
@@ -153,7 +156,8 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td> <button class="import-products">Import Products</button></td>
+                                <td> <button <?=/* @noEscape */$block->getButtonStatProduct();?>
+                                        class="import-products">Import Products</button></td>
                             </tr>
                             <tr>
                                 <td colspan="7">
@@ -197,7 +201,8 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td> <button class="import-products-options">Import Customizeable
+                                <td> <button <?=/* @noEscape */$block->getButtonStatCustomOption();?>
+                                        class="import-products-options">Import Customizeable
                                         Options</button></td>
                             </tr>
                             <tr>
