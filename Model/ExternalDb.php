@@ -1098,9 +1098,9 @@ class ExternalDb
                 'attribute_set_name',
                 "$atrSetName"
             );
-            foreach ($attributeSet as $attr):
+            foreach ($attributeSet as $attr) {
                 $attributeSetId = $attr->getAttributeSetId();
-            endforeach;
+            }
             return $attributeSetId;
         }
     }
