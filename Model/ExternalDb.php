@@ -557,8 +557,22 @@ class ExternalDb
         $imagePath = $imgPath . $productImage;
         $newPath = '/pub/media/productimages/';
         $productImage = $newPath . $productImage;
-        $this->file->changePermissions(BP . '/pub/media/productimages/', 0777);
-        $copied = $this->file->copy($imagePath, BP . $productImage);
+        if ($this->file->isExists($imagePath)) {
+            $this->file->changePermissions(BP . '/pub/media/productimages/', 0777);
+            $copied = $this->file->copy($imagePath, BP . $productImage);
+        } else {
+            $imageName = 'dummyimage.png';
+            $imageName = 'dummyimage.png';
+            //menual install path
+            $imgPath = BP . '/app/code/Embraceit/OscommerceToMagento/view/adminhtml/web/images/';
+            //in case composer install
+            if (!$this->file->isExists($imgPath)) {
+                $imgPath = BP . '/vendor/embraceit/oscommerce-to-magento/view/adminhtml/web/images/';
+            }
+            $imagePath = $imgPath . $imageName;
+            $productImage = $newPath . $imageName;
+            $copied = $this->file->copy($imagePath, BP . $productImage);
+        }
         return $productImage;
     }
 
