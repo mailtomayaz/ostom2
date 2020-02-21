@@ -22,7 +22,7 @@
     "repositories":[
         {
             "type": "vcs",
-            "url" : "git@bitbucket.org:m_ayaz@bitbucket.org/kmembrace/oscommerce-to-magento.git"
+            "url" : "git@bitbucket.org:kmembrace/oscommerce-to-magento.git"
         }
     ]
 }
