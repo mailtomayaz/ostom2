@@ -1,5 +1,5 @@
 {
-    "name": "embraceit/oscommerce-to-magento",
+    "name": "kmembrace/oscommerce-to-magento",
     "description": "Import data from oscommarce to magento 2",
     "require": {
         "php": "7.0.*|7.1.*|7.2.*"
