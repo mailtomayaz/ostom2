@@ -562,7 +562,6 @@ class ExternalDb
             $copied = $this->file->copy($imagePath, BP . $productImage);
         } else {
             $imageName = 'dummyimage.png';
-            $imageName = 'dummyimage.png';
             //menual install path
             $imgPath = BP . '/app/code/Embraceit/OscommerceToMagento/view/adminhtml/web/images/';
             //in case composer install
