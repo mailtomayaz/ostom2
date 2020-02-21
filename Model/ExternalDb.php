@@ -557,9 +557,14 @@ class ExternalDb
         $imagePath = $imgPath . $productImage;
         $newPath = '/pub/media/productimages/';
         $productImage = $newPath . $productImage;
+
         if ($this->file->isExists($imagePath)) {
-            $this->file->changePermissions(BP . '/pub/media/productimages/', 0777);
-            $copied = $this->file->copy($imagePath, BP . $productImage);
+            //check if file is valid than copy
+            $arrImageStat = $this->file->stat($imagePath);
+            if ($arrImageStat['size'] > 0) {
+                $this->file->changePermissions(BP . '/pub/media/productimages/', 0777);
+                $copied = $this->file->copy($imagePath, BP . $productImage);
+            }
         } else {
             $imageName = 'dummyimage.png';
             //menual install path
@@ -953,6 +958,7 @@ class ExternalDb
             $productIdProd = '';
             $pImage = '';
             $flag = true;
+
             try {
                 foreach ($results as $product) {
                     //progress bar unset data
@@ -960,7 +966,6 @@ class ExternalDb
                     $ncounter++;
                     $this->setProductprogress($ncounter);
                     //skip and check if this product exist in database
-
                     $checkSku = 'sku' . '-' . $product['products_id'];
                     $isProductExist = $this->productCollectionFactory->create()
                         ->addAttributeToSelect('*')
@@ -1111,9 +1116,9 @@ class ExternalDb
                 'attribute_set_name',
                 "$atrSetName"
             );
-            foreach ($attributeSet as $attr) {
+            foreach ($attributeSet as $attr) :
                 $attributeSetId = $attr->getAttributeSetId();
-            }
+            endforeach;
             return $attributeSetId;
         }
     }
@@ -1209,7 +1214,8 @@ class ExternalDb
 
         //add product image
         $productImage = $this->setImageProduct($pImage);
-        if ($productImage != '') {
+
+        if (($productImage != '') && ($this->file->isExists(BP . $productImage))) {
             $productInfo
                 ->addImageToMediaGallery(BP . $productImage, ['image', 'small_image', 'thumbnail'], false, false);
         }
