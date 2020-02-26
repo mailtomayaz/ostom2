@@ -41,15 +41,18 @@ define([
         var chunck;
         var realCounter;
         var i;
-
+        var arrButtons = ['import-categories', 'clean-category-data', 'clean-products-data', 'import-products', 'import-products-options','checkConnection'];
         $(document).ready(function () {
             /**
              * check database connection
              * @param {string} customurl - url of the contorller to check database connection.
              * @return {string} message - databse connected or not.
              */
-
-            $('.checkConnection').click(function () {
+            $(document).on("click", ".checkConnection", function () {
+            //$('.checkConnection').click(function () {
+                $(this).closest(".collapsible-content-tab").addClass("heightlight-tab");
+                //$(".collapsible-tab-accordian.allow").addClass("heightlight-tab");
+                //collapsible-tab-accordian allow
                 var customurl = databaseTestUrl;
                 $.ajax({
                     url: customurl,
@@ -64,9 +67,13 @@ define([
                         $('.dataimportdiv').css('display', 'block');
                         $(".import-status").html(message);
                         $("#button-modal").trigger('click');
+                        $(".collapsible-content-tab").removeClass("heightlight-tab");
+                        //$(".collapsible-tab-accordian").removeClass("heightlight-tab");
                     },
                     error: function (xhr, status, errorThrown) {
                         console.log('Error happens. Try again.');
+                        $(".collapsible-content-tab").removeClass("heightlight-tab");
+                        //$(".collapsible-tab-accordian").removeClass("heightlight-tab");
                     }
                 });
             });
@@ -77,9 +84,8 @@ define([
              * @param {Number} catCount - total number of categoires in oscommerce database
              * @param {Number} totalLimit - chunksize configured in backend.
              */
-
-            $('.import-categories').click(function () {
-
+            $(document).on("click", ".import-categories", function () {
+                $(this).closest(".collapsible-content-tab").addClass("heightlight-tab");
                 var customurl = addCategoriesUrl;
                 totalChunks = Number(catCount) / totalLimit;
                 numberOfChunks = Math.round(totalChunks);
@@ -88,7 +94,7 @@ define([
                 entityData['chunkSize'] = totalLimit;
                 entityData['mainDiv'] = 'import-categories';
                 entityData['progressDiv'] = 'progress-category';
-                entityData['entityType'] = 'category';
+                entityData['entityType'] = 'Categories';
                 entityData['progresCounterController'] = 'Getdata';
                 entityData['progressBarDiv'] = 'progress-bar-category';
                 entityData['barMessageDiv'] = 'category-progress-bar';
@@ -115,7 +121,7 @@ define([
              */
             function getAjaxEntityInformation(index, entityData)
             {
-                chunkSize=Number(entityData['chunkSize']);
+                chunkSize = Number(entityData['chunkSize']);
                 if (Number(index + 1) == Number(entityData['totalChunks'])) {
                     //remaning items
                     chunkSize = Number(entityData['totalCount']) % Number(entityData['chunkSize']);
@@ -138,10 +144,13 @@ define([
                         //
                         $('#chunk-number').html(index);
                         $('#chunk-size').html(chunkSize);
+                        //disable all other buttons
+                        disableButtons();
                         realCounter = progressCounterEntity(chunkSize, entityData['totalChunks'], index);
                     },
                     success: function (response) {
                         if (response.importStatus != true) {
+                            enableButtons();
                             $('.' + entityData['progressDiv'][index]).css('display', 'block');
                             message = response.importStatus;
                             $(".import-status").html(message);
@@ -153,11 +162,14 @@ define([
                         if (entityData['url'][index] != undefined) {
                             //again process for next chunk of data
                             getAjaxEntityInformation(index, entityData);
+                        } else {
+                            enableButtons();
+                            $(".collapsible-content-tab").removeClass("heightlight-tab");
                         }
                     },
                     error: function (xhr, status, errorThrown) {
                         console.log('Error happens. Try again.');
-                        alert(errorThrown);
+                        $(".collapsible-content-tab").removeClass("heightlight-tab");
                         xhr.abort();
                     }
                 });
@@ -177,7 +189,7 @@ define([
                 var bar = document.getElementById(entityData['progressBarDiv']);
                 bar.max = chunkSize;
                 bar.value = 1; // completed Steps
-                var isMessageDisplayed=false;
+                var isMessageDisplayed = false;
                 $.ajax({
                     url: customurl,
                     type: 'POST',
@@ -197,7 +209,7 @@ define([
                         var statusmessage = $('.' + entityData['statusMessage']);
                         var percent = Math.floor((barValue / chunkSize) *
                             100);
-                            $('#progress-counter').html(barValue);
+                        $('#progress-counter').html(barValue);
                         statusmessage.text(barValue + ' out of ' + chunkSize +
                             ' (' + percent + ' %) Completed! Total Chunks ' +
                             Math.round(totalChunks) + ' Processing Chunk ' +
@@ -238,7 +250,8 @@ define([
              * @param {Number} productCount - total number of products in oscommerce database
              * @param {Number} totalLimit - chunksize configured in backend.
              */
-            $('.import-products').click(function () {
+            $(document).on("click", ".import-products", function () {
+                $(this).closest(".collapsible-content-tab").addClass("heightlight-tab");
                 var customurl = addProductUrl;
                 totalChunks = Number(productCount) / totalLimit;
                 numberOfChunks = Math.round(totalChunks);
@@ -247,7 +260,7 @@ define([
                 entityData['chunkSize'] = totalLimit;
                 entityData['mainDiv'] = 'import-products';
                 entityData['progressDiv'] = 'progress-product';
-                entityData['entityType'] = 'product';
+                entityData['entityType'] = 'Products';
                 entityData['progresCounterController'] = 'Getproductdata';
                 entityData['progressBarDiv'] = 'progress-bar-product';
                 entityData['barMessageDiv'] = 'product-progress-bar';
@@ -272,7 +285,8 @@ define([
             * @param {Number} customOptionCount - total number of custom option in oscommerce database
             * @param {Number} totalLimit - chunksize configured in backend.
             */
-            $('.import-products-options').click(function () {
+            $(document).on("click", ".import-products-options", function () {
+                $(this).closest(".collapsible-content-tab").addClass("heightlight-tab");
                 var customurl = addProductCustomOptionUrl;
                 totalChunks = Number(customOptionCount) / totalLimit;
                 numberOfChunks = Math.round(totalChunks);
@@ -386,7 +400,28 @@ define([
             $("#button-modal").on("click", function () {
                 $('#model-window').modal('openModal');
             });
+            //show message on refresh page
+            window.onbeforeunload = function () {
+                return "Data will be lost if you leave the page, are you sure?";
+            };
+            //disable other buttons in case already one process is running
 
+            function disableButtons()
+            {
+                
+                $.each(arrButtons, function (index, value) {
+                    $('.' + value).prop('disabled', true);
+                })
+
+            }
+            //enable buttons in case request is successfull
+            function enableButtons()
+            {
+                
+                $.each(arrButtons, function (index, value) {
+                    $('.' + value).prop('disabled', false);
+                })
+            }
         });
 
 

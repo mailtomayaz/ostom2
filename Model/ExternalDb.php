@@ -511,9 +511,30 @@ class ExternalDb
         $imagePath = $imgPath . $categoryImage;
         $newPath = '/pub/media/catalog/category/';
         $categoryImage = $newPath . $categoryImage;
+
+        if ($this->file->isExists($imagePath)) {
+            //check if file is valid than copy
+            $arrImageStat = $this->file->stat($imagePath);
+            if ($arrImageStat['size'] > 0) {
+                $this->file->changePermissions(BP . '/pub/media/catalog/', 0777);
+                $copied = $this->file->copy($imagePath, BP . $categoryImage);
+            }
+        } else {
+            $imageName = 'dummyimage.png';
+            //menual install path
+            $imgPath = BP . '/app/code/Embraceit/OscommerceToMagento/view/adminhtml/web/images/';
+            //in case composer install
+            if (!$this->file->isExists($imgPath)) {
+                $imgPath = BP . '/vendor/embraceit/oscommerce-to-magento/view/adminhtml/web/images/';
+            }
+            $imagePath = $imgPath . $imageName;
+            $categoryImage = $newPath . $imageName;
+            $copied = $this->file->copy($imagePath, BP . $categoryImage);
+        }
+
         $this->file->changePermissions(BP . '/pub/media/catalog/', 0777);
         $copied = $this->file->copy($imagePath, BP . $categoryImage);
-        return $imageName;
+        return $categoryImage;
     }
     /**
      * Get Oscommerce product image path from configurations
@@ -621,6 +642,14 @@ class ExternalDb
         $urlKey = $this->removeSpecialChar($urlKey);
         $categoryData = $this->categoryFactory->create($data);
         $urlKey = $urlKey . '-' . strtolower($description["categories_id"]);
+        if (preg_match("/[.!?,;:-]$/", $urlKey)) {
+            // 'remove dash from string last charactor';
+            $urlKey = substr($urlKey, 0, -1);
+        };
+        if (preg_match("/^[.!?,;:-]$/", $urlKey)) {
+            //  'remove dash/copyright from string first charactor';
+            $urlKey = substr($urlKey, 1);
+        };
         $categoryData->setCustomAttributes(
             [
                 "display_mode" => "PRODUCTS",
@@ -633,13 +662,11 @@ class ExternalDb
                 'category_id' => $description["categories_id"],
             ]
         );
-
         $checkCat = $this->categoryFactory->create()
             ->getCollection()
             ->addAttributeToFilter('category_id', $description["categories_id"]);
-
         $parentCatId = $checkCat->getFirstItem()->getParentId();
-        if ($parentCatId == null || $parentCatId == '') {
+        if ($parentCatId == '' || $parentCatId == null) {
             $result = $this->repository->save($categoryData);
             $catId = $result->getId();
         } else {
@@ -650,7 +677,6 @@ class ExternalDb
         $categoryDef->setStoreId(0);
         $categoryDef->setImage($data['data']['image']);
         $categoryDef->save();
-
         return $catId;
     }
     /**
@@ -699,6 +725,14 @@ class ExternalDb
                 $urlKey = $this->removeSpecialChar($urlKey);
                 $urlKey = $urlKey . '-' . $description["categories_id"];
 
+                if (preg_match("/[.!?,;:-]$/", $urlKey)) {
+                    // 'remove dash from string last charactor';
+                    $urlKey = substr($urlKey, 0, -1);
+                };
+                if (preg_match("/^[.!?,;:-]$/", $urlKey)) {
+                    //  'remove dash/copyright from string first charactor';
+                    $urlKey = substr($urlKey, 1);
+                };
                 $checkCat = $this->collectionFactory->create();
                 $checkCat->setStore($storeId);
                 $checkCat->addAttributeToFilter('url_key', $urlKey);
@@ -706,7 +740,6 @@ class ExternalDb
                 if ($parentCatId) {
                     continue;
                 }
-
                 $data['data']['category_id'] = $catId;
                 $data['data']['url_key'] = $urlKey;
                 $this->updateCategory($description, $data);
@@ -1116,9 +1149,9 @@ class ExternalDb
                 'attribute_set_name',
                 "$atrSetName"
             );
-            foreach ($attributeSet as $attr) :
+            foreach ($attributeSet as $attr) {
                 $attributeSetId = $attr->getAttributeSetId();
-            endforeach;
+            }
             return $attributeSetId;
         }
     }

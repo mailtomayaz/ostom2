@@ -99,3 +99,7 @@ table.bottom-border-table td{
 #chunk-number,#chunk-size,#progress-counter{
   display:none;
 }
+.heightlight-tab{
+  border:1px solid #ccc;
+  background-color: lightyellow;
+}
