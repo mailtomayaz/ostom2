@@ -21,7 +21,7 @@
     "minimum-stability": "dev",
     "repositories":[
         {
-            "type": "git",
+            "type": "vcs",
             "url" : "git@bitbucket.org:kmembrace/oscommerce-to-magento.git",
             "app_credentials": {
                 "key": "SJPagGyFvHA5BsSDUw",
