@@ -14,7 +14,7 @@
         <tab>osc_m2</tab>
         <resource>Embraceit_OscommerceToMagento::parent</resource>
         <group id="firstgroup" showInWebsite="1"  showInStore="1"  showInDefault="1">
-            <label>Import data</label>
+            <label>Import Data</label>
             <field id="dbHostName" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="100" type="text">
             <label>Database Hostname</label>
             </field>
@@ -28,7 +28,7 @@
             <label>Database Password</label>
             </field>
                <field id="databasePrefex" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="103" type="text">
-            <label>Database table prefix i.e (osc_)</label>
+            <label>Database Table Prefix i.e (osc_)</label>
             </field>
              <field id="productImagePath" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="103" type="text">
             <label>Product Image Path i.e (/var/www/html/image/)</label>
@@ -37,17 +37,17 @@
             <label>Category Image Path i.e (/var/www/html/image/)</label>
             </field>
               <field id="customAttribute" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="103" type="text">
-            <label>custom attribute name comma (,) seperated</label>
+            <label>Custom Attribute Name Comma (,) Seperated</label>
             </field>
             <field id="customAttributeTitle" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="103" type="text">
-            <label>custom attribute title comma (,) seperated</label>
+            <label>Custom Attribute Title Comma (,) Seperated</label>
             </field>
             <field id="oscVersion" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="104" type="select">
-            <label>Oscommerece Version</label>
+            <label>OsCommerce Version</label>
             <source_model>Embraceit\OscommerceToMagento\Model\AdminArray</source_model>
             </field>
                         <field id="dataChunkSize" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="104" type="select">
-            <label>Data Import Chunk size </label>
+            <label>Data Import Chunk Size </label>
             <source_model>Embraceit\OscommerceToMagento\Model\AdminChunkArray</source_model>
             </field>
         </group>
