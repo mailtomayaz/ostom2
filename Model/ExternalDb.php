@@ -26,12 +26,14 @@ use Magento\Eav\Model\Entity\TypeFactory;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory as eavCollectionFactory;
 use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResourceConnection\ConnectionFactory;
 use Magento\Framework\App\State;
 use Magento\framework\Filesystem\Driver\File;
 use Magento\Framework\Serialize\Serializer\Serialize;
 use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
+use Magento\Framework\View\Asset\Repository as assetRepo;
 use Magento\Store\Model\Store as storeModel;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -182,6 +184,16 @@ class ExternalDb
      *
      * @var CategorySetupFactory
      */
+    protected $assetRepo;
+    /**
+     *
+     * @var assetRepo
+     */
+    protected $request;
+    /**
+     *
+     * @var RequestInterface
+     */
     protected $categorySetupFactory;
     /**
      * @param ConnectionFactory $connectionFactory
@@ -214,6 +226,8 @@ class ExternalDb
      * @param ModuleDataSetupInterface $setup
      * @param LoggerInterface $logger
      * @param CollectionFactory $categoryCollection
+     * @param assetRepo $assetRepo
+     * @param RequestInterface $request
      *
      */
     public function __construct(
@@ -246,7 +260,9 @@ class ExternalDb
         Serialize $serialize,
         ModuleDataSetupInterface $setup,
         LoggerInterface $logger,
-        CollectionFactory $categoryCollection
+        CollectionFactory $categoryCollection,
+        assetRepo $assetRepo,
+        RequestInterface $request
     ) {
         $this->connectionFactory = $connectionFactory;
         $this->scopeConfig = $scopeConfig;
@@ -283,6 +299,8 @@ class ExternalDb
         $this->setup = $setup;
         $this->logger = $logger;
         $this->collectionFactory = $categoryCollection;
+        $this->assetRepo = $assetRepo;
+        $this->request = $request;
         $this->initDb();
     }
 
@@ -488,53 +506,42 @@ class ExternalDb
      */
     public function setImageCategory($categoryImage)
     {
-        $imageName = '';
+        $imageName = 'dummyimage.png';
+        $path = BP . '/pub/media/catalog/category/';
+        $params = ['_secure' => $this->request->isSecure()];
+        $imgPathDefault = $this->assetRepo->getUrlWithParams(
+            'Embraceit_OscommerceToMagento::images/dummyimage.png',
+            $params
+        );
         if ($categoryImage == '' || $this->getCategoryImagePath() == null) {
-            $imageName = $categoryImage = 'dummyimage.png';
-            $imgPath = BP . '/app/code/Embraceit/OscommerceToMagento/view/adminhtml/web/images/';
-            //in case composer install
-            if (!$this->file->isExists($imgPath)) {
-                $imgPath = BP . '/vendor/embraceit/oscommerce-to-magento/view/adminhtml/web/images/';
+            $categoryImagePath = $path . $categoryImage;
+            if (!$this->file->isExists($path)) {
+                $this->file->createDirectory($path);
             }
-        } else {
+            $categoryImagePath = $path . $imageName;
+            $this->file->changePermissions($path, 0777);
+            $this->file->copy($imgPathDefault, $categoryImagePath);
+            return $imageName;
+        }
+        if ($categoryImage != '' && $this->getCategoryImagePath() != null) {
             $imgPath = $this->getCategoryImagePath();
-        }
+            $catImage = $imgPath . $categoryImage;
 
-        $path = BP . '/pub/media/catalog/category';
-        if (!$this->file->isExists($path)) {
-            $path = BP . '/pub/media/catalog/category';
-            $this->file->createDirectory($path);
-        }
-
-        $imageName = $categoryImage;
-        $newPath = '';
-        $imagePath = $imgPath . $categoryImage;
-        $newPath = '/pub/media/catalog/category/';
-        $categoryImage = $newPath . $categoryImage;
-
-        if ($this->file->isExists($imagePath)) {
-            //check if file is valid than copy
-            $arrImageStat = $this->file->stat($imagePath);
-            if ($arrImageStat['size'] > 0) {
-                $this->file->changePermissions(BP . '/pub/media/catalog/', 0777);
-                $copied = $this->file->copy($imagePath, BP . $categoryImage);
+            if ($this->file->isExists($catImage)) {
+                $arrImageStat = $this->file->stat($catImage);
+                if (!$this->file->isExists($path)) {
+                    $this->file->createDirectory($path);
+                }
+                $categoryImagePath = $path . $categoryImage;
+                if ($arrImageStat['size'] > 0) {
+                    $this->file->changePermissions($path, 0777);
+                    $this->file->copy($catImage, $categoryImagePath);
+                    return $categoryImage;
+                } else {
+                    return $imageName;
+                }
             }
-        } else {
-            $imageName = 'dummyimage.png';
-            //menual install path
-            $imgPath = BP . '/app/code/Embraceit/OscommerceToMagento/view/adminhtml/web/images/';
-            //in case composer install
-            if (!$this->file->isExists($imgPath)) {
-                $imgPath = BP . '/vendor/embraceit/oscommerce-to-magento/view/adminhtml/web/images/';
-            }
-            $imagePath = $imgPath . $imageName;
-            $categoryImage = $newPath . $imageName;
-            $copied = $this->file->copy($imagePath, BP . $categoryImage);
         }
-
-        $this->file->changePermissions(BP . '/pub/media/catalog/', 0777);
-        $copied = $this->file->copy($imagePath, BP . $categoryImage);
-        return $categoryImage;
     }
     /**
      * Get Oscommerce product image path from configurations
@@ -552,55 +559,49 @@ class ExternalDb
      * @param string $productImage
      * @return string $productImage
      */
+
     public function setImageProduct($productImage)
     {
-        $imageName = '';
-        if ($productImage == '' || $this->getProductImagePath() == null) {
-            $imageName = $productImage = 'dummyimage.png';
-            //menual install path
-            $imgPath = BP . '/app/code/Embraceit/OscommerceToMagento/view/adminhtml/web/images/';
-            //in case composer install
-            if (!$this->file->isExists($imgPath)) {
-                $imgPath = BP . '/vendor/embraceit/oscommerce-to-magento/view/adminhtml/web/images/';
-            }
-        } else {
-            $imgPath = $this->getProductImagePath();
-        }
-
+        $imageName = 'dummyimage.png';
         $path = BP . '/pub/media/productimages/';
-        if (!$this->file->isExists($path)) {
-            $path = BP . '/pub/media/productimages/';
-            $this->file->createDirectory($path);
-        }
-
-        $imageName = $productImage;
-        $newPath = '';
-        $imagePath = $imgPath . $productImage;
-        $newPath = '/pub/media/productimages/';
-        $productImage = $newPath . $productImage;
-
-        if ($this->file->isExists($imagePath)) {
-            //check if file is valid than copy
-            $arrImageStat = $this->file->stat($imagePath);
-            if ($arrImageStat['size'] > 0) {
-                $this->file->changePermissions(BP . '/pub/media/productimages/', 0777);
-                $copied = $this->file->copy($imagePath, BP . $productImage);
+        $relPath= '/pub/media/productimages/';
+        $params = ['_secure' => $this->request->isSecure()];
+        $imgPathDefault = $this->assetRepo->getUrlWithParams(
+            'Embraceit_OscommerceToMagento::images/dummyimage.png',
+            $params
+        );
+        if ($productImage == '' || $this->getProductImagePath() == null) {
+            $productImagePath = $path . $productImage;
+            if (!$this->file->isExists($path)) {
+                $this->file->createDirectory($path);
             }
-        } else {
-            $imageName = 'dummyimage.png';
-            //menual install path
-            $imgPath = BP . '/app/code/Embraceit/OscommerceToMagento/view/adminhtml/web/images/';
-            //in case composer install
-            if (!$this->file->isExists($imgPath)) {
-                $imgPath = BP . '/vendor/embraceit/oscommerce-to-magento/view/adminhtml/web/images/';
-            }
-            $imagePath = $imgPath . $imageName;
-            $productImage = $newPath . $imageName;
-            $copied = $this->file->copy($imagePath, BP . $productImage);
+            $productImagePath = $path . $imageName;
+            $this->file->changePermissions($path, 0777);
+            $this->file->copy($imgPathDefault, $productImagePath);
+            return $imageName;
         }
-        return $productImage;
+        if ($productImage != '' && $this->getProductImagePath() != null) {
+            $imgPath = $this->getProductImagePath();
+            $prodImage = $imgPath . $productImage;
+
+            if ($this->file->isExists($prodImage)) {
+                $arrImageStat = $this->file->stat($prodImage);
+                if (!$this->file->isExists($path)) {
+                    $this->file->createDirectory($path);
+                }
+                $productImagePath = $path . $productImage;
+                if ($arrImageStat['size'] > 0) {
+                    $this->file->changePermissions($path, 0777);
+                    $this->file->copy($prodImage, $productImagePath);
+                    $prodImage=$relPath.$productImage;
+                    return $prodImage;
+                } else {
+                    return $imageName;
+                }
+            }
+        }
     }
-
+    
     /**
      * Create store view from Oscommerce languges
      *
@@ -1247,7 +1248,6 @@ class ExternalDb
 
         //add product image
         $productImage = $this->setImageProduct($pImage);
-
         if (($productImage != '') && ($this->file->isExists(BP . $productImage))) {
             $productInfo
                 ->addImageToMediaGallery(BP . $productImage, ['image', 'small_image', 'thumbnail'], false, false);
