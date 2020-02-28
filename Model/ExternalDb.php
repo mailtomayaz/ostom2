@@ -571,14 +571,13 @@ class ExternalDb
             $params
         );
         if ($productImage == '' || $this->getProductImagePath() == null) {
-            $productImagePath = $path . $productImage;
             if (!$this->file->isExists($path)) {
                 $this->file->createDirectory($path);
             }
             $productImagePath = $path . $imageName;
             $this->file->changePermissions($path, 0777);
             $this->file->copy($imgPathDefault, $productImagePath);
-            return $imageName;
+            return $relPath.$imageName;
         }
         if ($productImage != '' && $this->getProductImagePath() != null) {
             $imgPath = $this->getProductImagePath();
@@ -601,7 +600,7 @@ class ExternalDb
             }
         }
     }
-    
+
     /**
      * Create store view from Oscommerce languges
      *
