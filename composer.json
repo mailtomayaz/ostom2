@@ -22,7 +22,11 @@
     "repositories":[
         {
             "type": "vcs",
-            "url" : "git@bitbucket.org:kmembrace/oscommerce-to-magento.git"
+            "url" : "git@bitbucket.org:kmembrace/oscommerce-to-magento.git",
+            "app_credentials": {
+                "key": "BX4WbUHpAa68F9nQmG",
+                "secret": "VR693GQzR2bzn3SRW84TfmtvZ6UZj59j"
+              }
         }
     ]
 }
