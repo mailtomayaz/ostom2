@@ -18,11 +18,6 @@
             "Embraceit\\OscommerceToMagento\\": ""
         }
     },
-    "minimum-stability": "dev",
-    "repositories":[
-        {
-            "type": "vcs",
-            "url" : "https://bitbucket.org/kmembrace/oscommerce-to-magento.git"
-        }
-    ]
+    "minimum-stability": "dev"
+
 }
