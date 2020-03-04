@@ -7,6 +7,10 @@ namespace Embraceit\OscommerceToMagento\Model;
 
 use Magento\Framework\Option\ArrayInterface;
 
+/**
+ * admin configuration chunk size array
+ *
+ */
 class AdminChunkArray implements ArrayInterface
 {
 

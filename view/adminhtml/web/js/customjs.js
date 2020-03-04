@@ -330,7 +330,7 @@ define([
                     showLoader: true,
                     data: {
                         form_key: formKey,
-                        clean_type: 'category'
+                        clean_type: 'Categories'
                     },
                     beforeSend: function () {
                     },
@@ -362,7 +362,7 @@ define([
                     showLoader: true,
                     data: {
                         form_key: formKey,
-                        clean_type: 'product'
+                        clean_type: 'Products'
                     },
                     beforeSend: function () {
                     },
@@ -386,7 +386,7 @@ define([
                 type: 'popup',
                 responsive: true,
                 innerScroll: true,
-                title: 'Import Status',
+                title: 'Status',
                 buttons: [{
                     text: $.mage.__('OK'),
                     class: '',

@@ -60,12 +60,12 @@ class Cleardata extends \Magento\Backend\App\Action
         //get requests parameters
         $post = $this->getRequest()->getPostValue();
         if (isset($post['clean_type'])) {
-            if ($post['clean_type'] == 'category') {
+            if ($post['clean_type'] == 'Categories') {
                 $Isdelete = $this->modelExternalDb->deleteCategoryData();
                 return $this->jsonFactory->create()->setData(
                     ['message' => $post['clean_type'] . ' ' . self::CLEARED_DATA]
                 );
-            } elseif ($post['clean_type'] == 'product') {
+            } elseif ($post['clean_type'] == 'Products') {
                 $Isdelete = $this->modelExternalDb->deleteProductData();
                 return $this->jsonFactory->create()->setData(
                     ['message' => $post['clean_type'] . ' ' . self::CLEARED_DATA]
