@@ -513,7 +513,7 @@ class ExternalDb
             'Embraceit_OscommerceToMagento::images/dummyimage.png',
             $params
         );
-        if ($categoryImage == '' || $this->getCategoryImagePath() == null) {
+        if ($categoryImage == '' || $this->getCategoryImagePath() == null ||  strlen($categoryImage) > 90) {
             $categoryImagePath = $path . $categoryImage;
             if (!$this->file->isExists($path)) {
                 $this->file->createDirectory($path);
@@ -523,7 +523,7 @@ class ExternalDb
             $this->file->copy($imgPathDefault, $categoryImagePath);
             return $imageName;
         }
-        if ($categoryImage != '' && $this->getCategoryImagePath() != null) {
+        if ($categoryImage != '' && $this->getCategoryImagePath() != null && strlen($categoryImage) < 88 ) {
             $imgPath = $this->getCategoryImagePath();
             $catImage = $imgPath . $categoryImage;
 
@@ -564,22 +564,22 @@ class ExternalDb
     {
         $imageName = 'dummyimage.png';
         $path = BP . '/pub/media/productimages/';
-        $relPath= '/pub/media/productimages/';
+        $relPath = '/pub/media/productimages/';
         $params = ['_secure' => $this->request->isSecure()];
         $imgPathDefault = $this->assetRepo->getUrlWithParams(
             'Embraceit_OscommerceToMagento::images/dummyimage.png',
             $params
         );
-        if ($productImage == '' || $this->getProductImagePath() == null) {
+        if ($productImage == '' || $this->getProductImagePath() == null || strlen($productImage) > 89) {
             if (!$this->file->isExists($path)) {
                 $this->file->createDirectory($path);
             }
             $productImagePath = $path . $imageName;
             $this->file->changePermissions($path, 0777);
             $this->file->copy($imgPathDefault, $productImagePath);
-            return $relPath.$imageName;
+            return $relPath . $imageName;
         }
-        if ($productImage != '' && $this->getProductImagePath() != null) {
+        if ($productImage != '' && $this->getProductImagePath() != null && strlen($productImage) < 88) {
             $imgPath = $this->getProductImagePath();
             $prodImage = $imgPath . $productImage;
 
@@ -592,7 +592,7 @@ class ExternalDb
                 if ($arrImageStat['size'] > 0) {
                     $this->file->changePermissions($path, 0777);
                     $this->file->copy($prodImage, $productImagePath);
-                    $prodImage=$relPath.$productImage;
+                    $prodImage = $relPath . $productImage;
                     return $prodImage;
                 } else {
                     return $imageName;
@@ -641,15 +641,17 @@ class ExternalDb
         $urlKey = $this->removeAccent(strtolower($description["categories_name"]));
         $urlKey = $this->removeSpecialChar($urlKey);
         $categoryData = $this->categoryFactory->create($data);
-        $urlKey = $urlKey . '-' . strtolower($description["categories_id"]);
-        if (preg_match("/[.!?,;:-]$/", $urlKey)) {
+        $this->logger->info('url ky before=' . $urlKey);
+        if (preg_match("/[-]$/", $urlKey)) {
             // 'remove dash from string last charactor';
             $urlKey = substr($urlKey, 0, -1);
         };
-        if (preg_match("/^[.!?,;:-]$/", $urlKey)) {
+        if (preg_match("/^[-]/", $urlKey)) {
             //  'remove dash/copyright from string first charactor';
             $urlKey = substr($urlKey, 1);
         };
+        $urlKey = $urlKey . '-' . strtolower($description["categories_id"]);
+        $this->logger->info('url key after=' . $urlKey);
         $categoryData->setCustomAttributes(
             [
                 "display_mode" => "PRODUCTS",
@@ -697,6 +699,7 @@ class ExternalDb
         $categoryTra->setImage($arrData['data']['image']);
         $categoryTra->setDescription($description["box2_description"]);
         $categoryTra->setCategoryId($description["categories_id"]);
+        $this->logger->info('before update--' . $arrData['data']['url_key']);
         $categoryTra->save();
     }
     /**
@@ -723,16 +726,17 @@ class ExternalDb
             } else {
                 $urlKey = $this->removeAccent($description["categories_name"]);
                 $urlKey = $this->removeSpecialChar($urlKey);
-                $urlKey = $urlKey . '-' . $description["categories_id"];
 
-                if (preg_match("/[.!?,;:-]$/", $urlKey)) {
+                if (preg_match("/[-]$/", $urlKey)) {
                     // 'remove dash from string last charactor';
                     $urlKey = substr($urlKey, 0, -1);
                 };
-                if (preg_match("/^[.!?,;:-]$/", $urlKey)) {
+                if (preg_match("/^[-]$/", $urlKey)) {
                     //  'remove dash/copyright from string first charactor';
                     $urlKey = substr($urlKey, 1);
                 };
+                $urlKey = $urlKey . '-' . $description["categories_id"];
+                $this->logger->info($urlKey);
                 $checkCat = $this->collectionFactory->create();
                 $checkCat->setStore($storeId);
                 $checkCat->addAttributeToFilter('url_key', $urlKey);
@@ -1209,7 +1213,7 @@ class ExternalDb
         $productInfo->setMetaKeyword($proDes["meta_keywords"]);
         $urlKey = $this->removeAccent($proDes["products_name"]);
         $urlKey = $this->removeSpecialChar($urlKey);
-        $productInfo->setUrlKey($urlKey); // url key of the product
+
         $productInfo->setDescription($proDes['products_description']);
         //assign product categories
         $productInfo->setCustomAttribute('subtitle', $proDes['subtitle']);
@@ -1223,7 +1227,8 @@ class ExternalDb
             //  'remove dash/copyright from string first charactor';
             $urlKey = substr($urlKey, 1);
         };
-
+        $this->logger->info('product url ky='.$urlKey);
+        $productInfo->setUrlKey($urlKey); // url key of the product
         $collectionProduct = $this->productCollectionFactory->create()
             ->addAttributeToSelect(['entity_id'])
             ->addAttributeToFilter('url_key', ['like' => "%" . $urlKey . '%']);
@@ -1810,12 +1815,12 @@ class ExternalDb
     public function removeSpecialChar($urlKey)
     {
         $urlKey = preg_replace('/&/', '', $urlKey);
-        $urlKey = preg_replace('/\s+/', '-', $urlKey);
-        $urlKey = preg_replace('/,/', '', $urlKey);
-        $urlKey = preg_replace('/[+]/', '-', $urlKey);
-        $urlKey = preg_replace('/\'/', '-', $urlKey);
-        $urlKey = preg_replace('/[:]/', '-', $urlKey);
-        $urlKey = preg_replace('/[.]/', '-', $urlKey);
+        $urlKey = preg_replace('/[@]/', '', $urlKey);
+        $urlKey = preg_replace('/[!]/', '', $urlKey);
+        $urlKey = preg_replace('/[?]/', '', $urlKey);
+        $urlKey = preg_replace('/[;]/', '', $urlKey);
+        $urlKey = preg_replace('/[:]/', '', $urlKey);
+        $urlKey = preg_replace('/[.]/', '', $urlKey);
         $urlKey = preg_replace('/--/', '-', $urlKey);
         $urlKey = preg_replace('/[\/]/', '-', $urlKey);
         $urlKey = preg_replace('/[|]/', '', $urlKey);
@@ -1828,6 +1833,11 @@ class ExternalDb
         $urlKey = preg_replace('/[´]/', '', $urlKey);
         $urlKey = preg_replace('/[`]/', '-', $urlKey);
         $urlKey = preg_replace('/--/', '-', $urlKey);
+        $urlKey = preg_replace('/,/', '', $urlKey);
+        $urlKey = preg_replace('/[+]/', '-', $urlKey);
+        $urlKey = preg_replace('/\s+/', '-', $urlKey);
+        $urlKey = preg_replace('/\'/', '-', $urlKey);
+
         return $urlKey;
     }
     /**

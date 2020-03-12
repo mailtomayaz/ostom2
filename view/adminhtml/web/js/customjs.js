@@ -168,8 +168,9 @@ define([
                         }
                     },
                     error: function (xhr, status, errorThrown) {
-                        console.log('Error happens. Try again.');
+                        console.log('Error happens. Try again.'+errorThrown);
                         $(".collapsible-content-tab").removeClass("heightlight-tab");
+                         enableButtons();
                         xhr.abort();
                     }
                 });
@@ -238,8 +239,9 @@ define([
                         //return barValue;
                     },
                     error: function (xhr, status, errorThrown) {
-                        console.log('Error happens. Try again.');
-                        progressCounterEntity(chunkSize, totalChunks, index);
+                        console.log('Error happens. Try again.'+errorThrown);
+                        $(".collapsible-content-tab").removeClass("heightlight-tab");
+                         enableButtons();
                     }
                 });
 
