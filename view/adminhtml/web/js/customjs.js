@@ -239,9 +239,9 @@ define([
                         //return barValue;
                     },
                     error: function (xhr, status, errorThrown) {
-                        console.log('Error happens. Try again.'+errorThrown);
-                        $(".collapsible-content-tab").removeClass("heightlight-tab");
-                         enableButtons();
+                        console.log('Error happens. Try again.error:'+errorThrown+':xhr:'+xhr+'--status:'+status);
+                        // $(".collapsible-content-tab").removeClass("heightlight-tab");
+                        //  enableButtons();
                     }
                 });
 

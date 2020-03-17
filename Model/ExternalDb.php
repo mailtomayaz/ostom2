@@ -513,7 +513,7 @@ class ExternalDb
             'Embraceit_OscommerceToMagento::images/dummyimage.png',
             $params
         );
-        if ($categoryImage == '' || $this->getCategoryImagePath() == null ||  strlen($categoryImage) > 90) {
+        if ($categoryImage == '' || $this->getCategoryImagePath() == null || strlen($categoryImage) > 90) {
             $categoryImagePath = $path . $categoryImage;
             if (!$this->file->isExists($path)) {
                 $this->file->createDirectory($path);
@@ -523,7 +523,7 @@ class ExternalDb
             $this->file->copy($imgPathDefault, $categoryImagePath);
             return $imageName;
         }
-        if ($categoryImage != '' && $this->getCategoryImagePath() != null && strlen($categoryImage) < 88 ) {
+        if ($categoryImage != '' && $this->getCategoryImagePath() != null && strlen($categoryImage) < 88) {
             $imgPath = $this->getCategoryImagePath();
             $catImage = $imgPath . $categoryImage;
 
@@ -641,7 +641,6 @@ class ExternalDb
         $urlKey = $this->removeAccent(strtolower($description["categories_name"]));
         $urlKey = $this->removeSpecialChar($urlKey);
         $categoryData = $this->categoryFactory->create($data);
-        $this->logger->info('url ky before=' . $urlKey);
         if (preg_match("/[-]$/", $urlKey)) {
             // 'remove dash from string last charactor';
             $urlKey = substr($urlKey, 0, -1);
@@ -651,7 +650,6 @@ class ExternalDb
             $urlKey = substr($urlKey, 1);
         };
         $urlKey = $urlKey . '-' . strtolower($description["categories_id"]);
-        $this->logger->info('url key after=' . $urlKey);
         $categoryData->setCustomAttributes(
             [
                 "display_mode" => "PRODUCTS",
@@ -699,7 +697,6 @@ class ExternalDb
         $categoryTra->setImage($arrData['data']['image']);
         $categoryTra->setDescription($description["box2_description"]);
         $categoryTra->setCategoryId($description["categories_id"]);
-        $this->logger->info('before update--' . $arrData['data']['url_key']);
         $categoryTra->save();
     }
     /**
@@ -736,7 +733,6 @@ class ExternalDb
                     $urlKey = substr($urlKey, 1);
                 };
                 $urlKey = $urlKey . '-' . $description["categories_id"];
-                $this->logger->info($urlKey);
                 $checkCat = $this->collectionFactory->create();
                 $checkCat->setStore($storeId);
                 $checkCat->addAttributeToFilter('url_key', $urlKey);
@@ -1227,7 +1223,6 @@ class ExternalDb
             //  'remove dash/copyright from string first charactor';
             $urlKey = substr($urlKey, 1);
         };
-        $this->logger->info('product url ky='.$urlKey);
         $productInfo->setUrlKey($urlKey); // url key of the product
         $collectionProduct = $this->productCollectionFactory->create()
             ->addAttributeToSelect(['entity_id'])
