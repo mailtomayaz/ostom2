@@ -12,7 +12,7 @@
     <section id="firstsection" translate="label" sortOrder="100" showInWebsite="1"  showInStore="1"  showInDefault="1">
         <label>Data Import Settings</label>
         <tab>osc_m2</tab>
-        <resource>Embraceit_OscommerceToMagento::parent</resource>
+        <resource>Embraceitechnologies_OscommerceToMagento::parent</resource>
         <group id="firstgroup" showInWebsite="1"  showInStore="1"  showInDefault="1">
             <label>Import Data</label>
             <field id="dbHostName" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="100" type="text">

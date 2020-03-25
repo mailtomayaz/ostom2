@@ -15,7 +15,7 @@
             "registration.php"
         ],
         "psr-4": {
-            "Embraceit\\OscommerceToMagento\\": ""
+            "Embraceitechnologies\\OscommerceToMagento\\": ""
         }
     },
     "minimum-stability": "dev",

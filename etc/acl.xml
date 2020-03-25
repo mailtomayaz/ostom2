@@ -8,8 +8,8 @@
     <acl>
         <resources>
             <resource id="Magento_Backend::admin">
-                <resource id="Embraceit_OscommerceToMagento::parent" title="Data import" translate="title" sortOrder="30">
-                    <resource id="Embraceit_OscommerceToMagento::Firstchild" title="data import" translate="title" sortOrder="10"> </resource>
+                <resource id="Embraceitechnologies_OscommerceToMagento::parent" title="Data import" translate="title" sortOrder="30">
+                    <resource id="Embraceitechnologies_OscommerceToMagento::Firstchild" title="data import" translate="title" sortOrder="10"> </resource>
                 </resource>
             </resource>
         </resources>

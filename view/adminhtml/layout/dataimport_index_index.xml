@@ -7,7 +7,7 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <update handle="styles"/>
         <head>
-        <css src="Embraceit_OscommerceToMagento::css/customcss.css"/> 
+        <css src="Embraceitechnologies_OscommerceToMagento::css/customcss.css"/> 
     </head>
     <body>
     <referenceContainer name="page.messages">
@@ -15,7 +15,7 @@
  </referenceContainer>
         <referenceContainer name="content"> 
             <!-- <uiComponent name="embracit_data_listing"/> -->
-             <block class="Embraceit\OscommerceToMagento\Block\Adminhtml\Datacheck" name='dataimprortblock' template="Embraceit_OscommerceToMagento::dataimport.phtml"/>
+             <block class="Embraceit\OscommerceToMagento\Block\Adminhtml\Datacheck" name='dataimprortblock' template="Embraceitechnologies_OscommerceToMagento::dataimport.phtml"/>
      
         </referenceContainer>
     </body>

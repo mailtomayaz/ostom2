@@ -528,7 +528,7 @@ class ExternalDb
         $path = BP . '/pub/media/catalog/category/';
         $params = ['_secure' => $this->request->isSecure()];
         $imgPathDefault = $this->assetRepo->getUrlWithParams(
-            'Embraceit_OscommerceToMagento::images/dummyimage.png',
+            'Embraceitechnologies_OscommerceToMagento::images/dummyimage.png',
             $params
         );
         if ($categoryImage == '' || $this->getCategoryImagePath() == null || strlen($categoryImage) > 90) {
@@ -585,7 +585,7 @@ class ExternalDb
         $relPath = '/pub/media/productimages/';
         $params = ['_secure' => $this->request->isSecure()];
         $imgPathDefault = $this->assetRepo->getUrlWithParams(
-            'Embraceit_OscommerceToMagento::images/dummyimage.png',
+            'Embraceitechnologies_OscommerceToMagento::images/dummyimage.png',
             $params
         );
         if ($productImage == '' || $this->getProductImagePath() == null || strlen($productImage) > 89) {
