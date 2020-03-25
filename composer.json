@@ -30,6 +30,6 @@
         }
     ],
     "require":{
-        "embraceitechnologies/oscommerce-to-magento":"dev-master"
+        "embraceitechnologies/oscommerce-to-magento":"1.0.0"
     }
 }
