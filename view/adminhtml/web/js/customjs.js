@@ -88,6 +88,9 @@ define([
                 $(this).closest(".collapsible-content-tab").addClass("heightlight-tab");
                 var customurl = addCategoriesUrl;
                 totalChunks = Number(catCount) / totalLimit;
+                if (Number(totalChunks) < 1) {
+                    totalChunks=1
+                }
                 numberOfChunks = Math.round(totalChunks);
                 chunck = Number(numberOfChunks);
                 entityData['totalChunks'] = numberOfChunks;
@@ -168,9 +171,8 @@ define([
                         }
                     },
                     error: function (xhr, status, errorThrown) {
-                        console.log('Error happens. Try again.'+errorThrown);
+                        console.log('Error happens. Try again.');
                         $(".collapsible-content-tab").removeClass("heightlight-tab");
-                         enableButtons();
                         xhr.abort();
                     }
                 });
@@ -239,9 +241,8 @@ define([
                         //return barValue;
                     },
                     error: function (xhr, status, errorThrown) {
-                        console.log('Error happens. Try again.error:'+errorThrown+':xhr:'+xhr+'--status:'+status);
-                        // $(".collapsible-content-tab").removeClass("heightlight-tab");
-                        //  enableButtons();
+                        console.log('Error happens. Try again.');
+                        progressCounterEntity(chunkSize, totalChunks, index);
                     }
                 });
 
@@ -256,6 +257,9 @@ define([
                 $(this).closest(".collapsible-content-tab").addClass("heightlight-tab");
                 var customurl = addProductUrl;
                 totalChunks = Number(productCount) / totalLimit;
+                if (Number(totalChunks) < 1) {
+                    totalChunks=1
+                }
                 numberOfChunks = Math.round(totalChunks);
                 chunck = Number(numberOfChunks);
                 entityData['totalChunks'] = numberOfChunks;
@@ -291,6 +295,9 @@ define([
                 $(this).closest(".collapsible-content-tab").addClass("heightlight-tab");
                 var customurl = addProductCustomOptionUrl;
                 totalChunks = Number(customOptionCount) / totalLimit;
+                if (Number(totalChunks) < 1) {
+                    totalChunks=1;
+                }
                 numberOfChunks = Math.round(totalChunks);
                 chunck = Number(numberOfChunks);
                 entityData['totalChunks'] = numberOfChunks;
@@ -388,7 +395,7 @@ define([
                 type: 'popup',
                 responsive: true,
                 innerScroll: true,
-                title: 'Status',
+                title: 'Import Status',
                 buttons: [{
                     text: $.mage.__('OK'),
                     class: '',

@@ -22,9 +22,11 @@ class AdminArray implements ArrayInterface
     public function toOptionArray()
     {
         $arrayValue = [
-            ['value' => '1.0.0', 'label' => __('1.0.0')],
-            // ['value' => '2.0.0', 'label' => __('2.0.0')],
-            // ['value' => '3.0.0', 'label' => __('3.0.0')],
+            // ['value' => '1.0.0', 'label' => __('1.0.0')],
+            ['value' => '2.3.4.1', 'label' => __('2.3.4.1')],
+            ['value' => '2.3.3.3', 'label' => __('2.3.3.3')],
+            ['value' => '2.3.3.2', 'label' => __('2.3.3.2')],
+            ['value' => '2.3.3.1', 'label' => __('2.3.3.1')],
         ];
         return $arrayValue;
     }

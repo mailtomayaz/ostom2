@@ -28,5 +28,8 @@
                 "secret": "VR693GQzR2bzn3SRW84TfmtvZ6UZj59j"
               }
         }
-    ]
+    ],
+    "require":{
+        "embraceit/oscommerce-to-magento":"dev-master"
+    }
 }

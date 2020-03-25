@@ -389,4 +389,16 @@ class Datacheck extends Template
             return self::CHUNK_SIZE;
         }
     }
+    /**
+     *  config chunksize
+     * @return int
+     */
+    public function querygetAllProductDetials()
+    {
+        if ($this->modelExternalDb->getChunkSize() !== null) {
+            return $this->modelExternalDb->getAllProductDetials(1000, 500);
+        } else {
+            return self::CHUNK_SIZE;
+        }
+    }
 }

@@ -5,6 +5,7 @@
 namespace Embraceit\OscommerceToMagento\Model;
 
 use Magento\CatalogInventory\Api\StockRegistryInterface;
+use Magento\Catalog\Api\CategoryLinkManagementInterface;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Api\Data\ProductInterfaceFactory;
 use Magento\Catalog\Api\ProductRepositoryInterface;
@@ -35,6 +36,7 @@ use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\View\Asset\Repository as assetRepo;
 use Magento\Store\Model\Store as storeModel;
+use Magento\Store\Model\StoreFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -194,7 +196,19 @@ class ExternalDb
      *
      * @var RequestInterface
      */
+
     protected $categorySetupFactory;
+
+    protected $categoryLinkManagementInterface;
+    /**
+     *
+     * @var categoryLinkManagementInterface
+     */
+
+    /**
+     * @var StoreFactory
+     */
+    private $storeFactory;
     /**
      * @param ConnectionFactory $connectionFactory
      * @param ScopeConfigInterface $scopeConfig
@@ -262,7 +276,9 @@ class ExternalDb
         LoggerInterface $logger,
         CollectionFactory $categoryCollection,
         assetRepo $assetRepo,
-        RequestInterface $request
+        RequestInterface $request,
+        CategoryLinkManagementInterface $categoryLinkManagementInterface,
+        StoreFactory $storeFactory
     ) {
         $this->connectionFactory = $connectionFactory;
         $this->scopeConfig = $scopeConfig;
@@ -301,6 +317,8 @@ class ExternalDb
         $this->collectionFactory = $categoryCollection;
         $this->assetRepo = $assetRepo;
         $this->request = $request;
+        $this->categoryLinkManagementInterface = $categoryLinkManagementInterface;
+        $this->storeFactory = $storeFactory;
         $this->initDb();
     }
 
@@ -581,18 +599,31 @@ class ExternalDb
         }
         if ($productImage != '' && $this->getProductImagePath() != null && strlen($productImage) < 88) {
             $imgPath = $this->getProductImagePath();
+            $osVersion = $this->getOsVersion();
+            //$arrCustomOptoin = explode(',', $customOptionName);
+
             $prodImage = $imgPath . $productImage;
 
             if ($this->file->isExists($prodImage)) {
                 $arrImageStat = $this->file->stat($prodImage);
                 if (!$this->file->isExists($path)) {
+                    $this->file->changePermissions($path, 0777);
                     $this->file->createDirectory($path);
                 }
                 $productImagePath = $path . $productImage;
+                if ($osVersion != '1.0.0') {
+                    $arrProductImage = explode('/', $productImage);
+                    $productImagePath = $path . $arrProductImage[1];
+                }
                 if ($arrImageStat['size'] > 0) {
                     $this->file->changePermissions($path, 0777);
                     $this->file->copy($prodImage, $productImagePath);
-                    $prodImage = $relPath . $productImage;
+                    if ($osVersion != '1.0.0') {
+                        $prodImage = $relPath . $arrProductImage[1];
+                    }
+                    if ($osVersion == '1.0.0') {
+                        $prodImage = $relPath . $productImage;
+                    }
                     return $prodImage;
                 } else {
                     return $imageName;
@@ -600,7 +631,20 @@ class ExternalDb
             }
         }
     }
+    /**
+     * get existing store view from magento
+     * @return array $options
+     */
+    private function getStoreData()
+    {
+        $storeManagerDataList = $this->storeManagerInterface->getStores();
+        $options = [];
 
+        foreach ($storeManagerDataList as $key => $value) {
+            $options[] = ['label' => $value['name'] . ' - ' . $value['code'], 'value' => $key, 'code' => $value['code']];
+        }
+        return $options;
+    }
     /**
      * Create store view from Oscommerce languges
      *
@@ -608,20 +652,8 @@ class ExternalDb
     public function createStoreViewLng()
     {
         if ($resultsLanguge = $this->newDbConnection()->fetchAll($this->getAllLanguages())) {
-            $storesMag = $this->storeManagerInterface->getStores();
             foreach ($resultsLanguge as $lang) {
-                //magento store view languge
-                $addStore = true;
-                foreach ($storesMag as $mStoreLang) {
-                    $arrIsAdd = [];
-                    if (strtolower($lang['name']) == strtolower($mStoreLang['name'])) {
-                        $addStore = false;
-                    }
-                }
-
-                if ($addStore) {
-                    $this->createStoreView('', 1, $lang['name'], $lang['code'], 1, 1, 3);
-                }
+                $this->createStoreView('', 1, $lang['name'], $lang['code'], 1, 1, 3);
             }
         }
     }
@@ -636,8 +668,22 @@ class ExternalDb
     {
         $data['data']['name'] = $description["categories_name"];
         $newCatName = $description["categories_name"];
-        $metaTile = $description["meta_title"];
-        $metaDes = $description["meta_description"];
+        $metaTile = '';
+        $metaDes = '';
+        $metaKeyWords = '';
+        $metaInfo = '';
+        if (isset($description["meta_title"])) {
+            $metaTile = $description["meta_title"];
+        };
+        if (isset($description["meta_title"])) {
+            $metaDes = $description["meta_description"];
+        };
+        if (isset($description["meta_keywords"])) {
+            $metaKeyWords = $description["meta_keywords"];
+        };
+        if (isset($description["box1_description"])) {
+            $metaInfo = $description["box1_description"];
+        };
         $urlKey = $this->removeAccent(strtolower($description["categories_name"]));
         $urlKey = $this->removeSpecialChar($urlKey);
         $categoryData = $this->categoryFactory->create($data);
@@ -654,10 +700,10 @@ class ExternalDb
             [
                 "display_mode" => "PRODUCTS",
                 "is_anchor" => 1,
-                "meta_title" => $description["meta_title"],
-                "meta_description" => $description["meta_description"],
-                'meta_keyword' => $description["meta_keywords"],
-                'description' => $description["box1_description"],
+                "meta_title" => $metaTile,
+                "meta_description" => $metaDes,
+                'meta_keyword' => $metaKeyWords,
+                'description' => $metaInfo,
                 'url_key' => $urlKey,
                 'category_id' => $description["categories_id"],
             ]
@@ -687,15 +733,31 @@ class ExternalDb
      */
     public function updateCategory($description, $arrData)
     {
+        $metaTile = '';
+        $metaDes = '';
+        $metaKeyWords = '';
+        $metaInfo = '';
+        if (isset($description["meta_title"])) {
+            $metaTile = $description["meta_title"];
+        };
+        if (isset($description["meta_title"])) {
+            $metaDes = $description["meta_description"];
+        };
+        if (isset($description["meta_keywords"])) {
+            $metaKeyWords = $description["meta_keywords"];
+        };
+        if (isset($description["box1_description"])) {
+            $metaInfo = $description["box1_description"];
+        };
         $categoryTra = $this->modelCategory->load($arrData['data']['category_id'], $arrData['data']['store_id']);
         $categoryTra->setStoreId($arrData['data']['store_id']);
         $categoryTra->setName($description["categories_name"]);
         $categoryTra->setUrlKey(strtolower($arrData['data']['url_key']));
-        $categoryTra->setMetaTitle($description["meta_title"]);
-        $categoryTra->setMetaDescription($description["meta_description"]);
-        $categoryTra->setMetaKeyword($description["meta_keywords"]);
+        $categoryTra->setMetaTitle($metaTile);
+        $categoryTra->setMetaDescription($metaDes);
+        $categoryTra->setMetaKeyword($metaKeyWords);
         $categoryTra->setImage($arrData['data']['image']);
-        $categoryTra->setDescription($description["box2_description"]);
+        $categoryTra->setDescription($metaInfo);
         $categoryTra->setCategoryId($description["categories_id"]);
         $categoryTra->save();
     }
@@ -714,7 +776,7 @@ class ExternalDb
             }
 
             // create store view if not exist
-            $this->createStoreViewLng();
+            //$this->createStoreViewLng();
             //get store ID/languge id
             $storeId = $this->getStoreId($description['language_id']);
             $data['data']['store_id'] = $storeId;
@@ -760,6 +822,8 @@ class ExternalDb
         if ($results = $this->newDbConnection()->fetchAll($this->getAllCategories($startLimit, $totalLimit))) {
             $nCounter = 0;
             $flag = true;
+            $this->createStoreViewLng();
+
             foreach ($results as $category) {
                 try {
                     $this->unSetValue();
@@ -767,8 +831,14 @@ class ExternalDb
                     $this->setValue($nCounter);
                     //get category information
                     $categoryParent = $category['parent_id'];
-                    $categoryStatus = $category['categories_status'];
-                    $categoryInMenu = $category['menu'];
+                    $categoryStatus = 1;
+                    $categoryInMenu = 1;
+                    if (isset($category['categories_status'])) {
+                        $categoryStatus = $category['categories_status'];
+                    }
+                    if (isset($category['menu'])) {
+                        $categoryInMenu = $category['menu'];
+                    }
                     $categoryId = $category['categories_id'];
                     $categorySortOrder = $category['sort_order'];
                     //set default image with category if not exist
@@ -778,6 +848,7 @@ class ExternalDb
                     switch ($categoryParent) {
                         case 1:
                             //there is no parent with id 1 in magento 2
+                            $parent_id = 3;
                             break;
                         case 0:
                             //root category
@@ -914,7 +985,11 @@ class ExternalDb
                 }
             } else {
                 //other versions of oscommerce
-                return 0;
+                if ($results = $this->newDbConnection()->fetchAll($this->queryCustomOptionsCountLatestVersion())) {
+                    return count($results);
+                }
+
+                //return 0;
             }
         }
 
@@ -983,8 +1058,10 @@ class ExternalDb
      */
     public function addProducts($startLimit, $totalLimit)
     {
-        $this->addAttributeSet();
-
+        $osVersion = $this->getOsVersion();
+        if ($osVersion == '1.0.0') {
+            $this->addAttributeSet();
+        }
         if ($results = $this->newDbConnection()->fetchAll($this->getAllProductDetials($startLimit, $totalLimit))) {
             $ncounter = 0;
             $productId = '';
@@ -997,6 +1074,9 @@ class ExternalDb
                     //progress bar unset data
                     $this->unSetProductprogress();
                     $ncounter++;
+                    // if($ncounter < 46500){
+                    //     continue;
+                    // }
                     $this->setProductprogress($ncounter);
                     //skip and check if this product exist in database
                     $checkSku = 'sku' . '-' . $product['products_id'];
@@ -1012,16 +1092,27 @@ class ExternalDb
                         continue;
                     }
 
-                    //attach attribute set
-                    $atrType = $product['product_type'];
-                    $attributeSetId = $this->addAttributeSetProduct($atrType);
                     //Tax class
                     $txClsId = 0;
                     $this->addTaxClass($product['products_tax_class_id']);
                     $productInfo = $this->productFactory->create(); //productFactory
-                    $productInfo->setCustomAttribute('foxseo_discontinued', 0);
+
                     // attribute set id
-                    $productInfo->setAttributeSetId($attributeSetId);
+                    //only specific version posterland
+                    if ($osVersion == '1.0.0') {
+                        //attach attribute set
+                        $atrType = $product['product_type'];
+                        $attributeSetId = $this->addAttributeSetProduct($atrType);
+                        $productInfo->setCustomAttribute('foxseo_discontinued', 0);
+                        $productInfo->setAttributeSetId($attributeSetId);
+                        $productInfo->setCustomAttribute('supplier_number', $product['supplier_number']);
+                        $productInfo->setCustomAttribute('ts_dimensions_width', $product['products_width']);
+                        $productInfo->setCustomAttribute('ts_dimensions_height', $product['products_hight']);
+                        $productInfo->setCustomAttribute('color', $product['products_color']);
+                    }
+                    if ($osVersion != '1.0.0') {
+                        $productInfo->setAttributeSetId(4);
+                    }
                     // enabled = 1, disabled = 0
                     $productInfo->setStatus($product['products_status']);
                     // visibilty of product, 1 = Not Visible Individually, 2 = Catalog, 3 = Search, 4 = Catalog, Search
@@ -1038,10 +1129,7 @@ class ExternalDb
                     $productInfo->setPrice($product['products_price']);
                     // Assign product to Websites
                     $productInfo->setWebsiteIds([1]);
-                    $productInfo->setCustomAttribute('supplier_number', $product['supplier_number']);
-                    $productInfo->setCustomAttribute('ts_dimensions_width', $product['products_width']);
-                    $productInfo->setCustomAttribute('ts_dimensions_height', $product['products_hight']);
-                    $productInfo->setCustomAttribute('color', $product['products_color']);
+                    //only specific version posterland
                     $pImage = $product['products_image'];
                     $inStock = 0;
                     $productId = $product['products_id'];
@@ -1057,8 +1145,7 @@ class ExternalDb
                             'qty' => $product['products_quantity'],
                         ]
                     );
-                    //products to categories
-                    $this->addProductToCategory($productId);
+
                     //products to categories
                     $resultsProdDes = $this->newDbConnection()
                         ->fetchAll($this->getProductDescription($product['products_id']));
@@ -1080,6 +1167,8 @@ class ExternalDb
                             //there is no product id
                             continue;
                         }
+                        //products to categories
+                        $this->addProductToCategory($productId);
                         //update product
                         if ($proDes['language_id'] != 1 && $productIdProd != '') {
                             $this->updateProductData($proDes, $productIdProd);
@@ -1115,8 +1204,8 @@ class ExternalDb
                 $arrCatIds[] = $catId;
             }
         }
-
-        $this->productModel->setCategoryIds($arrCatIds);
+        $sku = 'sku-' . $productId;
+        $this->categoryLinkManagementInterface->assignProductToCategories($sku, $arrCatIds);
     }
 
     /**
@@ -1178,14 +1267,30 @@ class ExternalDb
 
     public function updateProductData($proDes, $productIdProd)
     {
+        $metaTile = '';
+        $metaDes = '';
+        $metaKeyWords = '';
+        $metaInfo = '';
+        if (isset($proDes["meta_title"])) {
+            $metaTile = $proDes["meta_title"];
+        };
+        if (isset($proDes["products_description"])) {
+            $metaDes = $proDes["products_description"];
+        };
+        if (isset($proDes["meta_keywords"])) {
+            $metaKeyWords = $proDes["meta_keywords"];
+        };
+        if (isset($proDes["box1_description"])) {
+            $metaInfo = $proDes["box1_description"];
+        };
         $storeId = $this->getStoreId($proDes['language_id']);
         $productData = $this->productModel->load($productIdProd);
         $productData->setStoreId($storeId);
         $productData->setName($proDes['products_name']); // name of the product
-        $productData->setMetaTitle($proDes["meta_title"]);
-        $productData->setMetaDescription($proDes["meta_description"]);
-        $productData->setMetaKeyword($proDes["meta_keywords"]);
-        $productData->setDescription($proDes['products_description']);
+        $productData->setMetaTitle($metaTile);
+        $productData->setMetaDescription($metaDes);
+        $productData->setMetaKeyword($metaKeyWords);
+        $productData->setDescription($metaDes);
         $productData->save();
     }
     /**
@@ -1199,22 +1304,40 @@ class ExternalDb
      */
     public function addNewProductData($proDes, $productId, $productInfo, $pImage)
     {
+        $metaTile = '';
+        $metaDes = '';
+        $metaKeyWords = '';
+        $metaInfo = '';
+        if (isset($proDes["meta_title"])) {
+            $metaTile = $proDes["meta_title"];
+        };
+        if (isset($proDes["products_description"])) {
+            $metaDes = $proDes["products_description"];
+        };
+        if (isset($proDes["meta_keywords"])) {
+            $metaKeyWords = $proDes["meta_keywords"];
+        };
+        if (isset($proDes["box1_description"])) {
+            $metaInfo = $proDes["box1_description"];
+        };
+
         $storeId = $this->getStoreId($proDes['language_id']);
         $productInfo->setStoreId($storeId);
         $sku = 'sku' . '-' . $productId;
         $productInfo->setSku($sku);
         $productInfo->setName($proDes['products_name']); // name of the product
-        $productInfo->setMetaTitle($proDes["meta_title"]);
-        $productInfo->setMetaDescription($proDes["meta_description"]);
-        $productInfo->setMetaKeyword($proDes["meta_keywords"]);
+        $productInfo->setMetaTitle($metaTile);
+        $productInfo->setMetaDescription($metaDes);
+        $productInfo->setMetaKeyword($metaKeyWords);
         $urlKey = $this->removeAccent($proDes["products_name"]);
         $urlKey = $this->removeSpecialChar($urlKey);
 
         $productInfo->setDescription($proDes['products_description']);
         //assign product categories
-        $productInfo->setCustomAttribute('subtitle', $proDes['subtitle']);
-        $productInfo->setCustomAttribute('subtitleposter', $proDes['subtitle']);
-
+        if (isset($proDes['subtitle'])) {
+            $productInfo->setCustomAttribute('subtitle', $proDes['subtitle']);
+            $productInfo->setCustomAttribute('subtitleposter', $proDes['subtitle']);
+        }
         if (preg_match("/[.!?,;:-]$/", $urlKey)) {
             // 'remove dash from string last charactor';
             $urlKey = substr($urlKey, 0, -1);
@@ -1270,7 +1393,7 @@ class ExternalDb
         $resultLang = $this->newDbConnection()->fetchAll($this->getLanguageById($id));
         $localStores = $this->storeManagerInterface->getStores();
         foreach ($localStores as $mStoreLang) {
-            if (strtolower($resultLang[0]['name']) == strtolower($mStoreLang['name'])) {
+            if (strtolower($resultLang[0]['code']) == strtolower($mStoreLang['code'])) {
                 $storeId = $mStoreLang['store_id'];
             }
         }
@@ -1343,15 +1466,14 @@ class ExternalDb
         if ($osVersion != '1.0.0') {
             if ($results = $this->newDbConnection()->fetchAll($this->queryCustomProductAttributes())) {
                 try {
-                    $this->getCustomOptionVersionTwo();
-                    $arrValue = [];
-                    $optionName = '';
-                    $exist = false;
+                    $nCounter = 0;
                     foreach ($results as $prod) {
+                        $nCounter++;
+                        $this->setOptionValue($nCounter);
                         $this->getCustomOptionVersionTwo($prod);
                     }
 
-                    return "Customizable options has been added";
+                    return true;
                 } catch (\Exception $e) {
                     return $e->getMessage();
                 }
@@ -1492,6 +1614,7 @@ class ExternalDb
             $productIdEco = $prod['products_id'];
             //generate sku
             $productSku = 'sku-' . $productIdEco;
+            $exist = false;
             //load product by sky
             $product = $this->productRepository->get($productSku);
             $orgPrice = $product->getPrice();
@@ -1504,14 +1627,16 @@ class ExternalDb
                 //
                 foreach ($results as $data) {
                     //get option detial with option id
+                    $arrValue = [];
                     $optionId = $data['options_id'];
                     $optionData = $this->newDbConnection()
                         ->fetchAll($this->queryGetOptionDetial($optionId));
-                    $optionName = $optionData[0]['products_options_name'];
-                    //get option value
+                    foreach ($optionData as $oName) {
+                        $optionName = $oName['products_options_name'];
+                    }
+                    // //get option value
                     $resultOptionData = $this->newDbConnection()
                         ->fetchAll($this->queryGetOptionData($optionId, $productIdEco));
-
                     //get option values
                     foreach ($resultOptionData as $option) {
                         $arrValue[] = [
@@ -1533,30 +1658,29 @@ class ExternalDb
                             'values' => $arrValue,
                         ],
                     ];
+
+                    $product->setHasOptions(1);
+                    $product->setCanSaveCustomOptions(true);
+                    foreach ($product->getOptions() as $opt) {
+                        if ($opt['default_title'] == $optionName) {
+                            $exist = true;
+                        }
+                    };
+
+                    if (!$exist) {
+                        foreach ($options as $arrayOption) {
+                            $option = $this->productOptionFactory->create();
+                            $option->setProductId($product->getId())
+                                ->setStoreId($product->getStoreId())
+                                ->addData($arrayOption);
+                            $product->addOption($option);
+                        }
+                    }
+
+                    $this->productRepository->save($product);
                 }
+                return true;
             }
-
-            $product->setHasOptions(1);
-            $product->setCanSaveCustomOptions(true);
-            foreach ($product->getOptions() as $opt) {
-                if ($opt['default_title'] == $optionName) {
-                    $exist = true;
-                }
-            };
-
-            if (!$exist) {
-                foreach ($options as $arrayOption) {
-                    $option = $this->productOptionFactory->create();
-                    $option->setProductId($product->getId())
-                        ->setStoreId($product->getStoreId())
-                        ->addData($arrayOption);
-                    $product->addOption($option);
-                }
-            }
-
-            $this->productRepository->save($product);
-            $message = "Customizable options has been added";
-            return $message;
         } catch (\Exception $e) {
             return $e->getMessage();
         }
@@ -1653,6 +1777,21 @@ class ExternalDb
             ->where($this->getDbPrefix() . 'products.' . $attribute . '  <> "" ')
             ->where($this->getDbPrefix() . 'products.' . $attribute . '_prices  <> "s:0:\"\"" ')
             ->order($this->getDbPrefix() . 'products.products_id', 'ASC');
+        return $select;
+    }
+    /**
+     * Query count total custom product option
+     *
+     * @param string $attribute
+     * @return string $select
+     */
+    public function queryCustomOptionsCountLatestVersion()
+    {
+        $select = $this->newDbConnection()
+            ->select()
+            ->from([$this->getDbPrefix() . 'products_attributes'], ['products_id'])
+            ->group('products_id')
+            ->order($this->getDbPrefix() . 'products_attributes.products_id', 'ASC');
         return $select;
     }
     /**
@@ -1845,9 +1984,9 @@ class ExternalDb
     public function getAllProductDetials($startLimit, $totalLimit)
     {
         $select = $this->newDbConnection()
-            ->select()
+            ->select('*')
             ->from($this->getDbPrefix() . 'products', '*')
-            ->order('products_id', 'ASC');
+            ->order($this->getDbPrefix() . 'products.products_id DESC');
         $limit = " LIMIT $startLimit,$totalLimit";
         return $select . $limit;
     }
@@ -1893,39 +2032,35 @@ class ExternalDb
 
         $stores = $this->storeManagerInterface->getStores();
         /** @var \Magento\Store\Model\Store $store */
-        $store = $this->storeModel->load($storeId);
-        /* 'code' is required attr. and should be set for existing store */
-        $event = $store->getCode() === null ? 'store_add' : 'store_edit';
-        foreach ($stores as $mstore) {
-            //check if store langue already added
-            if ($mstore['code'] == $code) {
-                $mstore['store_id'];
+
+        $store = $this->storeFactory->create();
+        $store->load($code);
+        if (!$store->getId()) {
+            $store->setIsActive($isActive);
+            if ($name !== null) {
+                $store->setName($name);
             }
-        }
 
-        $store->setIsActive($isActive);
-        if ($name !== null) {
-            $store->setName($name);
-        }
+            if ($code !== null) {
+                $store->setCode($code);
+            }
 
-        if ($code !== null) {
-            $store->setCode($code);
-        }
+            if ($websiteId !== null) {
+                $store->setWebsiteId($websiteId);
+            }
 
-        if ($websiteId !== null) {
-            $store->setWebsiteId($websiteId);
-        }
+            if ($groupId !== null) {
+                $store->setGroupId($groupId);
+            }
 
-        if ($groupId !== null) {
-            $store->setGroupId($groupId);
-        }
+            if ($sortOrder !== null) {
+                $store->setSortOrder($sortOrder);
+            }
 
-        if ($sortOrder !== null) {
-            $store->setSortOrder($sortOrder);
-        }
+            $store->save();
 
-        $store->save();
-        return $store;
+            return $store;
+        }
     }
     /**
      * Get product image path from configurations

@@ -58,9 +58,7 @@ width:0%;
 .collapsible-tab-accordian {
   background: #eee;
   border:1px solid #ccc;
-  min-height: 64px;
-  line-height: 64px;
-  padding-left: 25px;
+  padding: 3rem;
   cursor: pointer;
   /* font-size: .8rem; */
   font-weight: bold;

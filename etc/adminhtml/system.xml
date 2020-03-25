@@ -36,12 +36,6 @@
             <field id="categoryImagePath" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="103" type="text">
             <label>Category Image Path i.e (/var/www/html/image/)</label>
             </field>
-              <field id="customAttribute" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="103" type="text">
-            <label>Custom Attribute Name Comma (,) Seperated</label>
-            </field>
-            <field id="customAttributeTitle" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="103" type="text">
-            <label>Custom Attribute Title Comma (,) Seperated</label>
-            </field>
             <field id="oscVersion" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="104" type="select">
             <label>OsCommerce Version</label>
             <source_model>Embraceit\OscommerceToMagento\Model\AdminArray</source_model>
