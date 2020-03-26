@@ -3,7 +3,7 @@
  * Copyright © Embraceit, Inc. All rights reserved.
  */
 
-namespace Embraceit\OscommerceToMagento\Model;
+namespace Embraceitechnologies\OscommerceToMagento\Model;
 
 use Magento\Framework\Option\ArrayInterface;
 

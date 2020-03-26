@@ -3,9 +3,9 @@
  * Copyright © Embrace-it, Inc. All rights reserved.
  */
 
-namespace Embraceit\OscommerceToMagento\Block\Adminhtml;
+namespace Embraceitechnologies\OscommerceToMagento\Block\Adminhtml;
 
-use Embraceit\OscommerceToMagento\Model\ExternalDb as ModelExternalDb;
+use Embraceitechnologies\OscommerceToMagento\Model\ExternalDb as ModelExternalDb;
 use Magento\Backend\Block\Template;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Data\Form\FormKey;

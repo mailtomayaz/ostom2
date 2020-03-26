@@ -2,7 +2,7 @@
 /**
  * Copyright © Embrace-it, Inc. All rights reserved.
  */
-namespace Embraceit\OscommerceToMagento\Model;
+namespace Embraceitechnologies\OscommerceToMagento\Model;
 
 use Magento\CatalogInventory\Api\StockRegistryInterface;
 use Magento\Catalog\Api\CategoryLinkManagementInterface;

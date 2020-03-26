@@ -2,9 +2,9 @@
 /**
  * Copyright © Embrace-it, Inc. All rights reserved.
  */
-namespace Embraceit\OscommerceToMagento\Setup;
+namespace Embraceitechnologies\OscommerceToMagento\Setup;
 
-use Embraceit\OscommerceToMagento\Model\ExternalDb as ModelExternalDb;
+use Embraceitechnologies\OscommerceToMagento\Model\ExternalDb as ModelExternalDb;
 use Magento\Catalog\Model\Category;
 use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
 use Magento\Eav\Setup\EavSetup;

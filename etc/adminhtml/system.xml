@@ -38,11 +38,11 @@
             </field>
             <field id="oscVersion" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="104" type="select">
             <label>OsCommerce Version</label>
-            <source_model>Embraceit\OscommerceToMagento\Model\AdminArray</source_model>
+            <source_model>Embraceitechnologies\OscommerceToMagento\Model\AdminArray</source_model>
             </field>
                         <field id="dataChunkSize" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="104" type="select">
             <label>Data Import Chunk Size </label>
-            <source_model>Embraceit\OscommerceToMagento\Model\AdminChunkArray</source_model>
+            <source_model>Embraceitechnologies\OscommerceToMagento\Model\AdminChunkArray</source_model>
             </field>
         </group>
     </section>

@@ -15,7 +15,7 @@
  </referenceContainer>
         <referenceContainer name="content"> 
             <!-- <uiComponent name="embracit_data_listing"/> -->
-             <block class="Embraceit\OscommerceToMagento\Block\Adminhtml\Datacheck" name='dataimprortblock' template="Embraceitechnologies_OscommerceToMagento::dataimport.phtml"/>
+             <block class="Embraceitechnologies\OscommerceToMagento\Block\Adminhtml\Datacheck" name='dataimprortblock' template="Embraceitechnologies_OscommerceToMagento::dataimport.phtml"/>
      
         </referenceContainer>
     </body>

@@ -4,7 +4,7 @@
  * See COPYING.txt for license details.
  */
 
-namespace Embraceit\OscommerceToMagento\Controller\Index;
+namespace Embraceitechnologies\OscommerceToMagento\Controller\Index;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;

@@ -3,9 +3,9 @@
  * Copyright © Embrace-it, Inc. All rights reserved.
  */
 
-namespace Embraceit\OscommerceToMagento\Controller\Adminhtml\Ajax;
+namespace Embraceitechnologies\OscommerceToMagento\Controller\Adminhtml\Ajax;
 
-use Embraceit\OscommerceToMagento\Model\ExternalDb as ModelExternalDb;
+use Embraceitechnologies\OscommerceToMagento\Model\ExternalDb as ModelExternalDb;
 use Magento\Framework\Controller\Result\JsonFactory;
 
 /**

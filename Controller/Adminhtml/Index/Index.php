@@ -3,9 +3,9 @@
  * Copyright © Embraceit, Inc. All rights reserved.
  */
 
-namespace Embraceit\OscommerceToMagento\Controller\Adminhtml\Index;
+namespace Embraceitechnologies\OscommerceToMagento\Controller\Adminhtml\Index;
 
-use Embraceit\OscommerceToMagento\Model\ExternalDb as ModelExternalDb;
+use Embraceitechnologies\OscommerceToMagento\Model\ExternalDb as ModelExternalDb;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -26,7 +26,7 @@ class Index extends Action
      */
     protected $pageFactory;
     /**
-     * @var Embraceit\OscommerceToMagento\Model\ExternalDb
+     * @var Embraceitechnologies\OscommerceToMagento\Model\ExternalDb
      */
     protected $modelExternalDb;
     /**
