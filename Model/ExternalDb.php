@@ -333,28 +333,27 @@ class ExternalDb
      */
     public function initDb()
     {
+        $host = $this->getDomainIpAddress($this->hostName);
 
-        if ($this->hostName !== null) {
-            $db = $this->connectionFactory->create(
-                [
-                    'host' => $this->hostName,
-                    'dbname' => $this->databaseName,
-                    'username' => $this->databaseUser,
-                    'password' => $this->databasPassword,
-                    'active' => '1',
-                ]
-            );
-            $tableToTest = $this->getDbPrefix() . 'categories';
-            try {
-                $select = $db->select()
-                    ->from($tableToTest, 'categories_id');
-                if ($results = $db->fetchAll($select)) {
-                    return true;
-                }
-            } catch (\Exception $e) {
-                return false;
-            }
+        if ($this->checkConnectionDatabase()) {
+            return true;
+        } else {
+            return false;
         }
+    }
+    /**
+     * Setup oscommerce database connection
+     *
+     * @param string name
+     * @return string
+     */
+    public function getDomainIpAddress($name)
+    {
+        if ($name = '') {
+            $hostName = explode('//', $name);
+            return $hostName[1];
+        }
+        return $name;
     }
 
     /**
@@ -369,20 +368,55 @@ class ExternalDb
 
     public function newDbConnection()
     {
+        $host = $this->getDomainIpAddress($this->hostName);
+        $db = $this->connectionFactory->create(
+            [
+                'host' => $host,
+                'dbname' => $this->databaseName,
+                'username' => $this->databaseUser,
+                'password' => $this->databasPassword,
+                'active' => '1',
+            ]
+        );
 
-        if ($this->hostName !== null) {
+        return $db;
+    }
+
+    /**
+     * Setup oscommerce database connection
+     *
+     * @param  string hostName
+     * @param string databaseName
+     * @param string databaseUser
+     * @param string databasPassword
+     * @return connectionFactory database object
+     */
+
+    public function checkConnectionDatabase()
+    {
+        $host = $this->getDomainIpAddress($this->hostName);
+
+        try {
             $db = $this->connectionFactory->create(
                 [
-                    'host' => $this->hostName,
+                    'host' => $host,
                     'dbname' => $this->databaseName,
                     'username' => $this->databaseUser,
                     'password' => $this->databasPassword,
                     'active' => '1',
                 ]
             );
-            return $db;
+            $accessibleDbs = $db
+                ->query("SHOW DATABASES")
+                ->fetchAll(\PDO::FETCH_COLUMN, 0); //@codingStandardsIgnoreLine
+            if (in_array($this->databaseName, $accessibleDbs)) {
+                return true;
+            }
+        } catch (\Exception $e) {
+            return false;
         }
     }
+
 /**
  * Get total number of category
  *
@@ -391,10 +425,16 @@ class ExternalDb
     public function getCategoryCount()
     {
         $count = 0;
-        if ($this->hostName !== null) {
-            $select = $this->newDbConnection()->select()->from($this->getDbPrefix() . 'categories', 'categories_id');
-            if ($results = $this->newDbConnection()->fetchAll($select)) {
-                return count($results);
+        if ($this->checkConnectionDatabase()) {
+            try {
+                $select = $this->newDbConnection()
+                    ->select()
+                    ->from($this->getDbPrefix() . 'categories', 'categories_id');
+                if ($results = $this->newDbConnection()->fetchAll($select)) {
+                    return count($results);
+                }
+            } catch (\Exception $e) {
+                return $count;
             }
         }
         return $count;
@@ -641,7 +681,9 @@ class ExternalDb
         $options = [];
 
         foreach ($storeManagerDataList as $key => $value) {
-            $options[] = ['label' => $value['name'] . ' - ' . $value['code'], 'value' => $key, 'code' => $value['code']];
+            $options[] = ['label' => $value['name'] . ' - ' . $value['code'],
+                'value' => $key,
+                'code' => $value['code']];
         }
         return $options;
     }
@@ -954,13 +996,16 @@ class ExternalDb
     public function getTotalProductsCount()
     {
         $count = 0;
-        if ($this->hostName !== null) {
-            $select = $this->newDbConnection()->select()->from($this->getDbPrefix() . 'products', 'products_id');
-            if ($results = $this->newDbConnection()->fetchAll($select)) {
-                return count($results);
+        if ($this->checkConnectionDatabase()) {
+            try {
+                $select = $this->newDbConnection()->select()->from($this->getDbPrefix() . 'products', 'products_id');
+                if ($results = $this->newDbConnection()->fetchAll($select)) {
+                    return count($results);
+                }
+            } catch (\Exception $e) {
+                return $count;
             }
         }
-
         return $count;
     }
     /**
@@ -971,29 +1016,33 @@ class ExternalDb
     public function getTotalCustomOptionCount()
     {
         $count = 0;
-        if ($this->hostName !== null) {
-            $customOptionName = $this->getCustomAttributeData();
-            $osVersion = $this->getOsVersion();
-            $arrCustomOptoin = explode(',', $customOptionName);
-            if ($osVersion == '1.0.0') {
-                if (isset($arrCustomOptoin[0]) && $arrCustomOptoin[0] != '') {
-                    foreach ($arrCustomOptoin as $attribute) {
-                        if ($results = $this->newDbConnection()->fetchAll($this->queryCustomOptionsCount($attribute))) {
-                            return count($results);
+        if ($this->checkConnectionDatabase()) {
+            try {
+                $customOptionName = $this->getCustomAttributeData();
+                $osVersion = $this->getOsVersion();
+                $arrCustomOptoin = explode(',', $customOptionName);
+                if ($osVersion == '1.0.0') {
+                    if (isset($arrCustomOptoin[0]) && $arrCustomOptoin[0] != '') {
+                        foreach ($arrCustomOptoin as $attribute) {
+                            if ($results = $this->newDbConnection()
+                                ->fetchAll($this->queryCustomOptionsCount($attribute))) {
+                                return count($results);
+                            }
                         }
                     }
-                }
-            } else {
-                //other versions of oscommerce
-                if ($results = $this->newDbConnection()->fetchAll($this->queryCustomOptionsCountLatestVersion())) {
-                    return count($results);
-                }
+                } else {
+                    //other versions of oscommerce
+                    if ($results = $this->newDbConnection()->fetchAll($this->queryCustomOptionsCountLatestVersion())) {
+                        return count($results);
+                    }
 
-                //return 0;
+                    //return 0;
+                }
+            } catch (\Exception $e) {
+                return $count;
             }
+            return $count;
         }
-
-        return $count;
     }
 
     /**
@@ -1074,9 +1123,6 @@ class ExternalDb
                     //progress bar unset data
                     $this->unSetProductprogress();
                     $ncounter++;
-                    // if($ncounter < 46500){
-                    //     continue;
-                    // }
                     $this->setProductprogress($ncounter);
                     //skip and check if this product exist in database
                     $checkSku = 'sku' . '-' . $product['products_id'];

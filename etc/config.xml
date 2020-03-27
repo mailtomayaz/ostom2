@@ -8,11 +8,11 @@
     <default>
         <firstsection>
             <firstgroup>
-                <dbHostName>127.0.0.1</dbHostName>
-                <osDbName>posterland</osDbName>
-                <dbUserName>ayaz</dbUserName>
-                <dbPassword>admin123</dbPassword>
-                <oscVersion>Ver 1.0.0</oscVersion>
+                <dbHostName></dbHostName>
+                <osDbName></osDbName>
+                <dbUserName></dbUserName>
+                <dbPassword></dbPassword>
+                <oscVersion></oscVersion>
                 <dataChunkSize>500</dataChunkSize>
             </firstgroup>
         </firstsection>

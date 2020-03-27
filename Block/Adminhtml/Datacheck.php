@@ -401,4 +401,23 @@ class Datacheck extends Template
             return self::CHUNK_SIZE;
         }
     }
+
+        /**
+     * valid ip or domain
+     *@param string $name
+     * @return string
+     */
+
+    public function getIpAddress($name)
+    {
+        $validIpd = $this->modelExternalDb->getDomainIpAddress($name);
+        return $validIpd;
+    }
+
+    public function validateDataConnection()
+    {
+
+        
+        return $this->modelExternalDb->checkConnectionDatabase();
+    }
 }

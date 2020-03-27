@@ -17,6 +17,7 @@
             <label>Import Data</label>
             <field id="dbHostName" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="100" type="text">
             <label>Database Hostname</label>
+             <validate>validate-url</validate>
             </field>
             <field id="osDbName" showInWebsite="1"  showInStore="1"  showInDefault="1"  translate="label" sortOrder="101" type="text">
             <label>Database Name</label>

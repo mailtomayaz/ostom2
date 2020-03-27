@@ -16,9 +16,9 @@ Install with Composer
 
 Specify the version of the module you need, and go.
 
-composer config repositories.reponame vcs https://github.com/mailtomayaz/oscommerce-to-magento 
+composer config repositories.oscommerce-to-magento vcs git@bitbucket.org:kmembrace/oscommerce-to-magento.git 
 
-composer require  embraceit/oscommerce-to-magento:dev-master
+composer require  embraceitechnologies/oscommerce-to-magento
 
 
 Run following command 
