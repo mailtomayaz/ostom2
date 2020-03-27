@@ -402,9 +402,9 @@ class Datacheck extends Template
         }
     }
 
-        /**
+    /**
      * valid ip or domain
-     *@param string $name
+     * @param string $name
      * @return string
      */
 
@@ -413,11 +413,14 @@ class Datacheck extends Template
         $validIpd = $this->modelExternalDb->getDomainIpAddress($name);
         return $validIpd;
     }
+    /**
+     * check database connection
+     *
+     * @return boolean
+     */
 
     public function validateDataConnection()
     {
-
-        
         return $this->modelExternalDb->checkConnectionDatabase();
     }
 }

@@ -6,7 +6,7 @@ Manually Installation
 Magento2 module installation is very easy, please follow the steps for installation.
 
 
-Download and unzip the respective extension zip and create Embraceit/OscommerceToMagento  folder inside your magento/app/code/ directory and then move all module's files into magento root directory /app/code/mbraceit/OscommerceToMagento/folder.
+Download and unzip the respective extension zip and create Embraceitechnologies/OscommerceToMagento  folder inside your magento/app/code/ directory and then move all module's files into magento root directory /app/code/Embraceitechnologies/OscommerceToMagento/folder.
 
 
 
@@ -31,7 +31,7 @@ $ php bin/magento setup:static-content:deploy
 
 Uninstalling module
 
-composer remove  embraceit/oscommerce-to-magento
+composer remove  embraceitechnologies/oscommerce-to-magento
 
 $ php bin/magento setup:upgrade
 
