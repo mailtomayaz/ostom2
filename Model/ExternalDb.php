@@ -349,7 +349,7 @@ class ExternalDb
      */
     public function getDomainIpAddress($name)
     {
-        if ($name = '') {
+        if ($name != '') {
             $hostName = explode('//', $name);
             return $hostName[1];
         }
