@@ -376,9 +376,11 @@ class ExternalDb
                 'username' => $this->databaseUser,
                 'password' => $this->databasPassword,
                 'active' => '1',
+                'charset' => 'utf8',
+                'initStatements' => 'SET NAMES utf8'
             ]
         );
-
+        $db->query('SET NAMES UTF8');
         return $db;
     }
 
@@ -1332,11 +1334,11 @@ class ExternalDb
         $storeId = $this->getStoreId($proDes['language_id']);
         $productData = $this->productModel->load($productIdProd);
         $productData->setStoreId($storeId);
-        $productData->setName($proDes['products_name']); // name of the product
-        $productData->setMetaTitle($metaTile);
-        $productData->setMetaDescription($metaDes);
-        $productData->setMetaKeyword($metaKeyWords);
-        $productData->setDescription($metaDes);
+        $productData->setName(utf8_decode($proDes['products_name'])); // name of the product
+        $productData->setMetaTitle(utf8_decode($metaTile));
+        $productData->setMetaDescription(utf8_decode($metaDes));
+        $productData->setMetaKeyword(utf8_decode($metaKeyWords));
+        $productData->setDescription(utf8_decode($metaDes));
         $productData->save();
     }
     /**
@@ -1366,19 +1368,19 @@ class ExternalDb
         if (isset($proDes["box1_description"])) {
             $metaInfo = $proDes["box1_description"];
         };
-
+        $productName = html_entity_decode(utf8_decode($proDes["products_name"]));
         $storeId = $this->getStoreId($proDes['language_id']);
         $productInfo->setStoreId($storeId);
         $sku = 'sku' . '-' . $productId;
         $productInfo->setSku($sku);
-        $productInfo->setName($proDes['products_name']); // name of the product
-        $productInfo->setMetaTitle($metaTile);
-        $productInfo->setMetaDescription($metaDes);
-        $productInfo->setMetaKeyword($metaKeyWords);
-        $urlKey = $this->removeAccent($proDes["products_name"]);
+        $productInfo->setName($productName); // name of the product
+        $productInfo->setMetaTitle(utf8_decode($metaTile));
+        $productInfo->setMetaDescription(utf8_decode($metaDes));
+        $productInfo->setMetaKeyword(utf8_decode($metaKeyWords));
+        $urlKey = $this->removeAccent($productName);
         $urlKey = $this->removeSpecialChar($urlKey);
 
-        $productInfo->setDescription($proDes['products_description']);
+        $productInfo->setDescription(utf8_decode($proDes['products_description']));
         //assign product categories
         if (isset($proDes['subtitle'])) {
             $productInfo->setCustomAttribute('subtitle', $proDes['subtitle']);
